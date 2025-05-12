@@ -15,7 +15,12 @@ const Chat = ({ roomId, user }) => {
       const response = await axios.get(`/api/rooms/${roomId}/messages`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      setMessages(response.data);
+      if (Array.isArray(response.data)) {
+        setMessages(response.data);
+      } else {
+        console.warn('Unexpected response data for messages:', response.data);
+        setMessages([]);
+      }
     } catch (error) {
       console.error('Error fetching messages:', error);
     }

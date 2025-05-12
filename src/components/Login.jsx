@@ -30,7 +30,14 @@ const Login = ({ onLogin, onCancel }) => {
         // Do not switch form here, wait for popup close
       } else if (response.data.token) {
         localStorage.setItem('token', response.data.token);
-        onLogin(response.data);
+        // Fetch user info after login
+        try {
+          const userResponse = await api.get('/auth/me');
+          onLogin(userResponse.data);
+        } catch (err) {
+          console.error('Failed to fetch user info after login:', err);
+          onLogin(null);
+        }
         console.log('Login successful, navigating to /rooms');
         navigate('/rooms');
       }

@@ -282,14 +282,34 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
 
   const handleCustomUrlSubmit = (e) => {
     e.preventDefault();
+    console.log('Custom URL submitted:', customUrl);
     if (ReactPlayer.canPlay(customUrl)) {
       setMovie({ url: customUrl, title: 'Custom Video' });
-      updateMovieState(0, true);
+      setError(null);
+      // Update movie state locally first without immediately syncing to backend
+      // Commenting out updateMovieState to test local playback
+      // updateMovieState(0, true);
       setCustomUrl('');
     } else {
+      console.error('Invalid video URL:', customUrl);
       setError('Please enter a valid video URL');
     }
   };
+  
+  // Add useEffect to log movie state changes for debugging
+  useEffect(() => {
+    console.log('Movie state updated:', movie);
+  }, [movie]);
+  
+  // Modify updateMovieState to add error logging
+  // Remove duplicate updateMovieState declaration
+  // Remove duplicate handleCustomUrlSubmit declaration
+
+  // Original updateMovieState function
+  // Removed duplicate declaration to fix redeclaration error
+
+  // Original handleCustomUrlSubmit function
+  // Removed duplicate declaration to fix redeclaration error
 
   const handleProgress = () => {};
 

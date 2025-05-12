@@ -72,7 +72,7 @@ const RandomMovie = ({ onMovieClick }) => {
 
   return (
     <>
-      <style jsx>{`
+      <style>{`
         /* RandomMovie Component Styles (Dark Theme) */
 
         /* Root Container */

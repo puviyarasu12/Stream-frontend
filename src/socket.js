@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 
-const SOCKET_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+const SOCKET_URL ='https://stream-backend-wxa4.onrender.com';
 
 export const socket = io(SOCKET_URL, {
   autoConnect: false,

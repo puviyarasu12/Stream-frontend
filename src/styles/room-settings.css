@@ -1,0 +1,85 @@
+.room-settings .settings-group {
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+}
+
+.room-settings label {
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-muted);
+}
+
+.room-settings input[type="number"],
+.room-settings input[type="url"],
+.room-settings textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--color-bg-card);
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-light);
+  transition: border-color 0.3s ease;
+}
+
+.room-settings input[type="number"]:focus,
+.room-settings input[type="url"]:focus,
+.room-settings textarea:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
+}
+
+.room-settings input[type="checkbox"] {
+  margin-right: 8px;
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.room-settings .save-settings-btn,
+.room-settings .delete-room-btn {
+  width: 100%;
+  padding: 12px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: var(--spacing-sm);
+  color: var(--color-text-light);
+}
+
+.room-settings .save-settings-btn {
+  background-color: var(--color-primary);
+}
+
+.room-settings .save-settings-btn:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.room-settings .save-settings-btn:disabled {
+  background-color: #4b6cb7;
+  cursor: not-allowed;
+}
+
+.room-settings .delete-room-btn {
+  background-color: var(--color-error);
+}
+
+.room-settings .delete-room-btn:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
+
+.room-settings .delete-room-btn:disabled {
+  background-color: #f5a6ab;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .room-settings {
+    padding: var(--spacing-sm);
+    max-width: 100%;
+  }
+}

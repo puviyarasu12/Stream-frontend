@@ -1,0 +1,706 @@
+/* User Watchlist General Styles (Dark Theme) */
+[data-theme="dark"] .user-watchlist {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: #1f2937; /* Dark gray background */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  font-family: 'Inter', sans-serif;
+  color: #d1d5db; /* Light gray text */
+}
+
+/* Watchlist Header */
+[data-theme="dark"] .watchlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #374151; /* Darker border */
+}
+
+[data-theme="dark"] .watchlist-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #f3f4f6; /* Lighter text for headings */
+  margin: 0;
+}
+
+/* Toggle Search Button */
+[data-theme="dark"] .toggle-search-btn {
+  padding: 10px 20px;
+  background-color: #3b82f6; /* Consistent blue accent */
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+[data-theme="dark"] .toggle-search-btn:hover {
+  background-color: #2563eb;
+}
+
+[data-theme="dark"] .toggle-search-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+[data-theme="dark"] .toggle-search-btn:active {
+  transform: scale(0.98);
+}
+
+[data-theme="dark"] .toggle-search-btn:disabled {
+  background-color: #4b5563; /* Darker gray for disabled */
+  cursor: not-allowed;
+}
+
+/* Movie Search Container */
+[data-theme="dark"] .movie-search-container {
+  background-color: #111827; /* Very dark gray */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 24px;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Watchlist Grid */
+[data-theme="dark"] .watchlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* Watchlist Item */
+[data-theme="dark"] .watchlist-item {
+  background-color: #111827;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+[data-theme="dark"] .watchlist-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="dark"] .watchlist-item:focus-within {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Watchlist Thumbnail */
+[data-theme="dark"] .watchlist-thumbnail {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+}
+
+/* No Poster Placeholder */
+[data-theme="dark"] .no-poster {
+  width: 100%;
+  height: 300px;
+  background-color: #374151; /* Darker gray for placeholder */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 700;
+  color: #9ca3af; /* Lighter gray for text */
+  text-transform: uppercase;
+}
+
+/* Watchlist Info */
+[data-theme="dark"] .watchlist-info {
+  padding: 16px;
+}
+
+[data-theme="dark"] .watchlist-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f3f4f6;
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .added-date {
+  font-size: 14px;
+  color: #9ca3af;
+  margin: 0 0 12px;
+}
+
+/* Remove Button */
+[data-theme="dark"] .remove-btn {
+  padding: 8px 16px;
+  background-color: #ef4444; /* Consistent red accent */
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+}
+
+[data-theme="dark"] .remove-btn:hover {
+  background-color: #dc2626;
+}
+
+[data-theme="dark"] .remove-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.5);
+}
+
+[data-theme="dark"] .remove-btn:active {
+  transform: scale(0.98);
+}
+
+/* Empty Message */
+[data-theme="dark"] .empty-message {
+  text-align: center;
+  font-size: 16px;
+  color: #9ca3af;
+  padding: 24px;
+  background-color: #111827;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Movie Details Modal */
+[data-theme="dark"] .movie-details-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+[data-theme="dark"] .movie-details-content {
+  background-color: #1f2937;
+  max-width: 600px;
+  width: 90%;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .movie-details-content h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f3f4f6;
+  margin-bottom: 16px;
+}
+
+[data-theme="dark"] .movie-details-content p {
+  font-size: 14px;
+  color: #d1d5db;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+[data-theme="dark"] .movie-details-content button {
+  padding: 10px 20px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+[data-theme="dark"] .movie-details-content button:hover {
+  background-color: #2563eb;
+}
+
+[data-theme="dark"] .movie-details-content button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+[data-theme="dark"] .watchlist-item {
+  animation: fadeIn 0.3s ease-out;
+}
+
+[data-theme="dark"] .movie-search-container {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  [data-theme="dark"] .user-watchlist {
+    padding: 20px;
+  }
+
+  [data-theme="dark"] .watchlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  [data-theme="dark"] .watchlist-thumbnail,
+  [data-theme="dark"] .no-poster {
+    height: 250px;
+  }
+
+  [data-theme="dark"] .watchlist-info h4 {
+    font-size: 15px;
+  }
+
+  [data-theme="dark"] .added-date {
+    font-size: 13px;
+  }
+
+  [data-theme="dark"] .remove-btn {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  [data-theme="dark"] .user-watchlist {
+    padding: 16px;
+  }
+
+  [data-theme="dark"] .watchlist-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  [data-theme="dark"] .watchlist-header h2 {
+    font-size: 20px;
+  }
+
+  [data-theme="dark"] .toggle-search-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  [data-theme="dark"] .movie-search-container {
+    padding: 16px;
+  }
+
+  [data-theme="dark"] .watchlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  [data-theme="dark"] .watchlist-thumbnail,
+  [data-theme="dark"] .no-poster {
+    height: 220px;
+  }
+
+  [data-theme="dark"] .no-poster {
+    font-size: 36px;
+  }
+
+  [data-theme="dark"] .watchlist-info {
+    padding: 12px;
+  }
+
+  [data-theme="dark"] .watchlist-info h4 {
+    font-size: 14px;
+  }
+
+  [data-theme="dark"] .added-date {
+    font-size: 12px;
+  }
+
+  [data-theme="dark"] .remove-btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  [data-theme="dark"] .empty-message {
+    font-size: 14px;
+    padding: 20px;
+  }
+
+  [data-theme="dark"] .movie-details-content {
+    width: 95%;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  [data-theme="dark"] .user-watchlist {
+    padding: 12px;
+  }
+
+  [data-theme="dark"] .watchlist-header h2 {
+    font-size: 18px;
+  }
+
+  [data-theme="dark"] .toggle-search-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  [data-theme="dark"] .watchlist-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  [data-theme="dark"] .watchlist-thumbnail,
+  [data-theme="dark"] .no-poster {
+    height: 200px;
+  }
+
+  [data-theme="dark"] .no-poster {
+    font-size: 32px;
+  }
+
+  [data-theme="dark"] .watchlist-info {
+    padding: 10px;
+  }
+
+  [data-theme="dark"] .watchlist-info h4 {
+    font-size: 13px;
+  }
+
+  [data-theme="dark"] .added-date {
+    font-size: 11px;
+  }
+
+  [data-theme="dark"] .remove-btn {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+
+  [data-theme="dark"] .empty-message {
+    font-size: 13px;
+    padding: 16px;
+  }
+
+  [data-theme="dark"] .movie-details-content {
+    padding: 16px;
+    max-height: 90vh;
+  }
+
+  [data-theme="dark"] .movie-details-content h3 {
+    font-size: 18px;
+  }
+
+  [data-theme="dark"] .movie-details-content p {
+    font-size: 13px;
+  }
+
+  [data-theme="dark"] .movie-details-content button {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+}
+
+/* Accessibility Enhancements */
+[data-theme="dark"] .user-watchlist:focus-within {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .watchlist-item:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  [data-theme="dark"] .user-watchlist {
+    background-color: #000000;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+  }
+
+  [data-theme="dark"] .watchlist-header {
+    border-bottom: 2px solid #ffffff;
+  }
+
+  [data-theme="dark"] .toggle-search-btn,
+  [data-theme="dark"] .movie-details-content button {
+    background-color: #0000ff;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+  }
+
+  [data-theme="dark"] .remove-btn {
+    background-color: #ff0000;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+  }
+
+  [data-theme="dark"] .watchlist-item {
+    background-color: #000000;
+    border: 2px solid #ffffff;
+  }
+
+  [data-theme="dark"] .watchlist-info h4,
+  [data-theme="dark"] .added-date {
+    color: #ffffff;
+  }
+
+  [data-theme="dark"] .empty-message {
+    background-color: #000000;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+  }
+
+  [data-theme="dark"] .no-poster {
+    background-color: #333333;
+    color: #ffffff;
+  }
+
+  [data-theme="dark"] .movie-search-container {
+    background-color: #000000;
+    border: 2px solid #ffffff;
+  }
+
+  [data-theme="dark"] .movie-details-modal {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  [data-theme="dark"] .movie-details-content {
+    background-color: #000000;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="dark"] .watchlist-item,
+  [data-theme="dark"] .movie-search-container,
+  [data-theme="dark"] .movie-details-modal,
+  [data-theme="dark"] .toggle-search-btn,
+  [data-theme="dark"] .remove-btn {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Utility Classes */
+[data-theme="dark"] .text-center {
+  text-align: center;
+}
+
+[data-theme="dark"] .mt-4 {
+  margin-top: 16px;
+}
+
+[data-theme="dark"] .mb-4 {
+  margin-bottom: 16px;
+}
+
+[data-theme="dark"] .p-4 {
+  padding: 16px;
+}
+
+[data-theme="dark"] .rounded-md {
+  border-radius: 6px;
+}
+
+[data-theme="dark"] .shadow-sm {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .bg-gray-900 {
+  background-color: #111827;
+}
+
+[data-theme="dark"] .text-gray-400 {
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .font-semibold {
+  font-weight: 600;
+}
+
+/* Button Group Styling */
+[data-theme="dark"] .watchlist-info .button-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* Error State for Movie Search */
+[data-theme="dark"] .movie-search-container input:invalid:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+}
+
+/* Disabled Button States */
+[data-theme="dark"] .toggle-search-btn:disabled,
+[data-theme="dark"] .remove-btn:disabled {
+  background-color: #4b5563;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Focus Visible States */
+[data-theme="dark"] .toggle-search-btn:focus-visible,
+[data-theme="dark"] .remove-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Hover Effects for Interactive Elements */
+[data-theme="dark"] .watchlist-item:hover .watchlist-info h4 {
+  color: #3b82f6;
+}
+
+[data-theme="dark"] .watchlist-item:hover .remove-btn {
+  background-color: #dc2626;
+}
+
+/* Additional Spacing Utilities */
+[data-theme="dark"] .gap-2 {
+  gap: 8px;
+}
+
+[data-theme="dark"] .gap-4 {
+  gap: 16px;
+}
+
+[data-theme="dark"] .mt-2 {
+  margin-top: 8px;
+}
+
+[data-theme="dark"] .mb-2 {
+  margin-bottom: 8px;
+}
+
+/* Ensure Consistent Line Height */
+[data-theme="dark"] .user-watchlist,
+[data-theme="dark"] .watchlist-info,
+[data-theme="dark"] .empty-message {
+  line-height: 1.5;
+}
+
+/* Animation for Modal Appearance */
+[data-theme="dark"] .movie-details-modal {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Ensure Proper Stacking Context */
+[data-theme="dark"] .user-watchlist {
+  position: relative;
+  z-index: 1;
+}
+
+[data-theme="dark"] .movie-details-modal {
+  z-index: 1000;
+}
+
+/* Additional Accessibility for Screen Readers */
+[data-theme="dark"] [aria-hidden="true"] {
+  display: none;
+}
+
+/* Ensure Consistent Box Sizing */
+[data-theme="dark"] *,
+[data-theme="dark"] *::before,
+[data-theme="dark"] *::after {
+  box-sizing: border-box;
+}
+
+/* Scrollbar Styling for Modal */
+[data-theme="dark"] .movie-details-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+[data-theme="dark"] .movie-details-content::-webkit-scrollbar-track {
+  background: #374151;
+  border-radius: 4px;
+}
+
+[data-theme="dark"] .movie-details-content::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 4px;
+}
+
+[data-theme="dark"] .movie-details-content::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Additional Dark Theme Utilities */
+[data-theme="dark"] .bg-gray-800 {
+  background-color: #1f2937;
+}
+
+[data-theme="dark"] .text-gray-300 {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .border-gray-700 {
+  border-color: #374151;
+}
+
+[data-theme="dark"] .shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Hover and Active States for Grid Items */
+[data-theme="dark"] .watchlist-item:active {
+  transform: scale(0.98);
+}
+
+/* Focus States for Interactive Elements */
+[data-theme="dark"] .watchlist-info h4:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Additional Animation for Grid Items */
+[data-theme="dark"] .watchlist-grid {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Ensure Modal Content is Readable */
+[data-theme="dark"] .movie-details-content a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+[data-theme="dark"] .movie-details-content a:hover {
+  color: #2563eb;
+}

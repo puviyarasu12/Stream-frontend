@@ -197,6 +197,7 @@
   overflow-x: auto;
   animation: fadeIn 0.5s ease-out;
   padding-bottom: var(--spacing-md);
+  align-items: center; /* Align items horizontally centered */
 }
 
 /* Movie Item */

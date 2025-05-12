@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import api from '../utils/api';
 import MovieSearch from './MovieSearch';
+import RandomMovie from './RandomMovie';
 import Chat from './Chat';
 import RoomSettings from './RoomSettings';
 import MovieDetails from './MovieDetails';
@@ -46,7 +47,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
   const [settingsUpdated, setSettingsUpdated] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [inviteCode, setInviteCode] = useState(room.inviteCode || '');
-  const [copySuccess, setCopySuccess] = useState(false); // New state for copy success
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const playerRef = useRef(null);
   const pollInterval = useRef(null);
@@ -81,7 +82,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
         const response = await api.post('/rooms/join', payload);
         console.log('Join room response:', response.data);
         setJoined(true);
-        setInviteCode(response.data.inviteCode || code); // Store invite code
+        setInviteCode(response.data.inviteCode || code);
         setError(null);
       } catch (joinError) {
         console.error('Failed to join private room:', joinError.response?.data, joinError.response?.status);
@@ -102,7 +103,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     try {
       await navigator.clipboard.writeText(inviteCode);
       setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 3000); // Hide after 3 seconds
+      setTimeout(() => setCopySuccess(false), 3000);
     } catch (error) {
       console.error('Failed to copy invite code:', error);
       setError('Failed to copy invite code.');
@@ -264,7 +265,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
 
   const handleVote = async (movieId) => {
     try {
-      await api.post(`/api/rooms/${room._id}/watchlist/${movieId}/vote`, {});
+      await api.post(`/rooms/${room._id}/watchlist/${movieId}/vote`, {});
       await fetchRoomState();
     } catch (error) {
       setError('Failed to vote');
@@ -273,7 +274,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
 
   const handleSelectWatchlistMovie = async (movieId) => {
     try {
-      await api.post(`/api/rooms/${room._id}/watchlist/${movieId}/select`, {});
+      await api.post(`/rooms/${room._id}/watchlist/${movieId}/select`, {});
       await fetchRoomState();
     } catch (error) {
       setError('Failed to select movie');
@@ -286,30 +287,16 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     if (ReactPlayer.canPlay(customUrl)) {
       setMovie({ url: customUrl, title: 'Custom Video' });
       setError(null);
-      // Update movie state locally first without immediately syncing to backend
-      // Commenting out updateMovieState to test local playback
-      // updateMovieState(0, true);
       setCustomUrl('');
     } else {
       console.error('Invalid video URL:', customUrl);
       setError('Please enter a valid video URL');
     }
   };
-  
-  // Add useEffect to log movie state changes for debugging
+
   useEffect(() => {
     console.log('Movie state updated:', movie);
   }, [movie]);
-  
-  // Modify updateMovieState to add error logging
-  // Remove duplicate updateMovieState declaration
-  // Remove duplicate handleCustomUrlSubmit declaration
-
-  // Original updateMovieState function
-  // Removed duplicate declaration to fix redeclaration error
-
-  // Original handleCustomUrlSubmit function
-  // Removed duplicate declaration to fix redeclaration error
 
   const handleProgress = () => {};
 
@@ -358,23 +345,21 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
             {room.isPrivate && joined && (
               <div className="private-zone">
                 <p>Welcome to the private zone!</p>
-              {inviteCode && (
-                <div className="invite-code-section" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <button
-                    onClick={handleCopyInviteCode}
-                    className="btn btn--secondary copy-invite-btn"
-                    aria-label="Copy invite code to clipboard"
-                  >
-                    Copy Invite Code
-                  </button>
-                  <span className="invite-code-text" style={{ fontWeight: 'bold', fontSize: '1rem' }}>
-                    {inviteCode}
-                  </span>
-                  {copySuccess && (
-                    <span className="success-message">Invite code copied!</span>
-                  )}
-                </div>
-              )}
+                {inviteCode && (
+                  <div className="invite-code-section" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button
+                      onClick={handleCopyInviteCode}
+                      className="btn btn--secondary copy-invite-btn"
+                      aria-label="Copy invite code to clipboard"
+                    >
+                      Copy Invite Code
+                    </button>
+                    <span className="invite-code-text" style={{ fontWeight: 'bold', fontSize: '1rem' }}>
+                      {inviteCode}
+                    </span>
+                    {copySuccess && <span className="success-message">Invite code copied!</span>}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -383,12 +368,90 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
               <div key={participant._id} className="participant">
                 <span>{participant.username}</span>
                 {room?.creator?._id === user?._id && participant._id !== user._id && (
-                  <div className="moderation-controls">
-                    {/* Add moderation buttons here if needed */}
-                  </div>
+                  <div className="moderation-controls">{/* Add moderation buttons here if needed */}</div>
                 )}
               </div>
             ))}
+          </div>
+          <div className="controls-section">
+            <div className="controls-header">
+              <div className="controls-buttons">
+                <button
+                  onClick={() => setShowSettings(!showSettings)}
+                  className="settings-btn btn btn--primary"
+                  aria-expanded={showSettings}
+                >
+                  {showSettings ? 'Close Settings' : 'Zone Settings'}
+                </button>
+                <button
+                  onClick={() => setShowWatchlist(!showWatchlist)}
+                  className="toggle-watchlist-btn btn btn--secondary"
+                >
+                  {showWatchlist ? 'Hide Watchlist' : 'Show Watchlist'}
+                </button>
+              </div>
+
+              {showSettings && (
+                <div className="settings-container">
+                  <RoomSettings room={room} onSettingsUpdate={handleSettingsUpdate} currentUserId={user?._id} />
+                </div>
+              )}
+
+              {settingsUpdated && <div className="success-message">Settings updated successfully!</div>}
+            </div>
+
+            {showWatchlist && (
+              <div className="watchlist-section" style={{ overflowY: 'auto', minHeight: '200px' }}>
+                <h3>Watchlist</h3>
+                <div
+                  className="watchlist-controls"
+                  style={{ marginBottom: '1rem', overflow: 'visible', minHeight: '100px' }}
+                >
+                  <div style={{ overflowY: 'auto', maxHeight: '300px' }}>
+                    <MovieSearch onMovieSelect={handleMovieSelect} buttonText="Add to Zone Watchlist" />
+                  </div>
+                </div>
+                <div className="watchlist-grid">
+                  {(!watchlist || watchlist.length === 0) && <p>No movies in watchlist</p>}
+                  {watchlist &&
+                    watchlist.map((item) => (
+                      <div
+                        key={item.movie.id}
+                        className="watchlist-item"
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handleWatchlistMovieClick(item.movie)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleWatchlistMovieClick(item.movie);
+                          }
+                        }}
+                      >
+                        {item.movie.thumbnail && item.movie.thumbnail !== 'N/A' ? (
+                          <img
+                            src={item.movie.thumbnail}
+                            alt={item.movie.title}
+                            className="watchlist-thumbnail"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="no-poster">
+                            <span>{item.movie.title[0]}</span>
+                          </div>
+                        )}
+                        <div className="watchlist-info">
+                          <h4>
+                            {item.movie.title} ({item.movie.year})
+                          </h4>
+                          <p>Added by: {item.addedBy.username}</p>
+                          <p>Votes: {(item.votes && item.votes.length) || 0}</p>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -427,7 +490,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
               />
             </div>
           ) : (
-            <div className="movie-selection">
+            <div className="movie-selection" style={{ overflowY: 'auto', minHeight: '200px' }}>
               <form onSubmit={handleCustomUrlSubmit} className="url-input-form">
                 <input
                   type="text"
@@ -438,11 +501,10 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
                 />
                 <button type="submit" className="btn btn--primary">Play Video</button>
               </form>
-              <div className="movie-search-section">
-                <MovieSearch
-                  onMovieSelect={handleMovieSelect}
-                  buttonText="Add to Zone Watchlist"
-                />
+              <div className="movie-search-section" style={{ overflow: 'visible', minHeight: '150px' }}>
+                <div style={{ overflowY: 'auto', maxHeight: '300px' }}>
+                  <MovieSearch onMovieSelect={handleMovieSelect} buttonText="Add to Zone Watchlist" />
+                </div>
               </div>
             </div>
           )}
@@ -450,95 +512,6 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
         <div className="chat-section">
           <Chat roomId={room._id} user={user} />
         </div>
-      </div>
-
-      <div className="controls-section">
-        <div className="controls-header">
-          <div className="controls-buttons">
-            <button
-              onClick={() => setShowSettings(!showSettings)}
-              className="settings-btn btn btn--primary"
-              aria-expanded={showSettings}
-            >
-              {showSettings ? 'Close Settings' : 'Zone Settings'}
-            </button>
-            <button
-              onClick={() => setShowWatchlist(!showWatchlist)}
-              className="toggle-watchlist-btn btn btn--secondary"
-            >
-              {showWatchlist ? 'Hide Watchlist' : 'Show Watchlist'}
-            </button>
-          </div>
-
-          {showSettings && (
-            <div className="settings-container">
-              <RoomSettings room={room} onSettingsUpdate={handleSettingsUpdate} currentUserId={user?._id} />
-            </div>
-          )}
-
-          {settingsUpdated && (
-            <div className="success-message">Settings updated successfully!</div>
-          )}
-        </div>
-
-        {showWatchlist && (
-          <div className="watchlist-section">
-            <h3>Watchlist</h3>
-            <div className="watchlist-grid">
-              {watchlist.length === 0 && <p>No movies in watchlist</p>}
-              {watchlist.map((item) => (
-                <div
-                  key={item.movie.id}
-                  className="watchlist-item"
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => handleWatchlistMovieClick(item.movie)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      handleWatchlistMovieClick(item.movie);
-                    }
-                  }}
-                >
-                  {item.movie.thumbnail && item.movie.thumbnail !== 'N/A' ? (
-                    <img
-                      src={item.movie.thumbnail}
-                      alt={item.movie.title}
-                      className="watchlist-thumbnail"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="no-poster">
-                      <span>{item.movie.title[0]}</span>
-                    </div>
-                  )}
-                  <div className="watchlist-info">
-                    <h4>
-                      {item.movie.title} ({item.movie.year})
-                    </h4>
-                    <p>Added by: {item.addedBy.username}</p>
-                    <p>Votes: {item.votes.length}</p>
-                    <button
-                      onClick={() => handleVote(item.movie.id)}
-                      className="vote-btn btn btn--secondary"
-                      disabled={!participants.some((p) => p._id === user?._id)}
-                    >
-                      {item.votes.includes(user?._id) ? 'Unvote' : 'Vote'}
-                    </button>
-                    {room?.creator?._id === user?._id && (
-                      <button
-                        onClick={() => handleSelectWatchlistMovie(item.movie.id)}
-                        className="select-watchlist-btn btn btn--primary"
-                      >
-                        Play Now
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {selectedMovie && (

@@ -7,8 +7,7 @@ const Chat = ({ roomId, user }) => {
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null); // Added to reference the messages container
   const pollInterval = useRef(null);
-  const isUserAtBottom = useRef(true);
-  const justSentMessage = useRef(false); // Track if the user just sent a message
+  // Removed isUserAtBottom and justSentMessage refs as they are related to auto-scrolling
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -38,47 +37,9 @@ const Chat = ({ roomId, user }) => {
     };
   }, [fetchMessages]);
 
-  // Track scroll position to determine if user is near bottom
-  const onScroll = () => {
-    const container = messagesContainerRef.current;
-    if (container) {
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      // Consider user at bottom if within 50px of bottom
-      isUserAtBottom.current = scrollHeight - scrollTop - clientHeight < 50;
-    }
-  };
+  // Removed useEffect that auto-scrolls to bottom on new messages
 
-  // Scroll to bottom when new messages arrive or user sends a message
-  useEffect(() => {
-    const container = messagesContainerRef.current;
-    if (!container) return;
-
-    // If user is near bottom or just sent a message, scroll to bottom
-    if (isUserAtBottom.current || justSentMessage.current) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      justSentMessage.current = false; // Reset after scrolling
-    }
-  }, [messages]);
-
-  // Allow user to scroll up and see all chats without auto-scrolling down
-  // Only auto-scroll if user is near bottom or just sent a message
-  useEffect(() => {
-    const container = messagesContainerRef.current;
-    if (!container) return;
-
-    const handleUserScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      // Update isUserAtBottom ref based on scroll position
-      isUserAtBottom.current = scrollHeight - scrollTop - clientHeight < 50;
-    };
-
-    container.addEventListener('scroll', handleUserScroll);
-
-    // Cleanup listener on unmount
-    return () => {
-      container.removeEventListener('scroll', handleUserScroll);
-    };
-  }, []);
+  // Removed useEffect that tracks scroll position for auto-scroll
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -90,8 +51,7 @@ const Chat = ({ roomId, user }) => {
         userId: user._id
       });
 
-      // Set flag to ensure scroll to bottom after sending
-      justSentMessage.current = true;
+      // Removed justSentMessage flag for auto-scroll
       // Fetch messages immediately after posting
       await fetchMessages();
       setNewMessage('');
@@ -462,7 +422,7 @@ const Chat = ({ roomId, user }) => {
         `}
       </style>
 
-      <div className="messages" onScroll={onScroll} ref={messagesContainerRef} role="log" aria-live="polite">
+      <div className="messages" ref={messagesContainerRef} role="log" aria-live="polite">
         {Array.isArray(messages) ? messages.map((message, index) => (
           <div
             key={message._id || index}

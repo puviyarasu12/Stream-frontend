@@ -31,8 +31,10 @@ const MovieSearch = ({ onMovieSelect, buttonText = "Add to Watchlist" }) => {
     setError(null);
     try {
       const response = await api.get(`/movies/search?query=${encodeURIComponent(searchQuery)}`);
-      setSearchResults(response.data);
-      if (response.data.length === 0) {
+      // Ensure response.data is an array
+      const results = Array.isArray(response.data) ? response.data : [];
+      setSearchResults(results);
+      if (results.length === 0) {
         setError('No movies found matching your search');
       }
     } catch (error) {

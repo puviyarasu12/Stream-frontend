@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 const Chat = ({ roomId, user }) => {
   const [messages, setMessages] = useState([]);
@@ -12,9 +12,7 @@ const Chat = ({ roomId, user }) => {
 
   const fetchMessages = useCallback(async () => {
     try {
-      const response = await axios.get(`/api/rooms/${roomId}/messages`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      const response = await api.get(`/rooms/${roomId}/messages`);
       if (Array.isArray(response.data)) {
         setMessages(response.data);
       } else {
@@ -87,11 +85,9 @@ const Chat = ({ roomId, user }) => {
     if (!newMessage.trim()) return;
 
     try {
-      await axios.post(`/api/rooms/${roomId}/messages`, {
+      await api.post(`/rooms/${roomId}/messages`, {
         content: newMessage,
         userId: user._id
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
 
       // Set flag to ensure scroll to bottom after sending

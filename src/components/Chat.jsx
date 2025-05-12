@@ -462,7 +462,7 @@ const Chat = ({ roomId, user }) => {
       </style>
 
       <div className="messages" onScroll={onScroll} ref={messagesContainerRef} role="log" aria-live="polite">
-        {messages.map((message, index) => (
+        {Array.isArray(messages) ? messages.map((message, index) => (
           <div
             key={message._id || index}
             className={`message ${message.user._id === user._id ? 'own' : ''}`}
@@ -473,7 +473,7 @@ const Chat = ({ roomId, user }) => {
               {new Date(message.timestamp).toLocaleTimeString()}
             </span>
           </div>
-        ))}
+        )) : null}
         <div ref={messagesEndRef} />
       </div>
 

@@ -97,9 +97,6 @@ const Home = ({ isAuthenticated, onNavigate }) => {
             <a href="/" className="nav-link" aria-current="page">
               Home
             </a>
-            <a href="/movies" className="nav-link">
-              Movies
-            </a>
             <a href="/profile" className="nav-link">
               Profile
             </a>

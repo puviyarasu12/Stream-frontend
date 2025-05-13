@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import api from '../utils/api';
 import MovieSearch from './MovieSearch';
-import RandomMovie from './RandomMovie';
 import Chat from './Chat';
 import RoomSettings from './RoomSettings';
 import MovieDetails from './MovieDetails';
@@ -65,7 +64,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
         setError('Failed to fetch invite code.');
       }
     }
-  }, [room._id, room.isPrivate, user]);
+  }, [room._id, room.isPrivate, user, room.creator?._id]);
 
   // Join room logic
   const joinRoom = useCallback(
@@ -260,15 +259,6 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       await fetchRoomState();
     } catch (error) {
       setError('Failed to add movie to watchlist');
-    }
-  };
-
-  const handleVote = async (movieId) => {
-    try {
-      await api.post(`/rooms/${room._id}/watchlist/${movieId}/vote`, {});
-      await fetchRoomState();
-    } catch (error) {
-      setError('Failed to vote');
     }
   };
 

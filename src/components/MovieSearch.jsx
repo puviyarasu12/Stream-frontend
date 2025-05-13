@@ -25,7 +25,6 @@ const MovieSearch = ({ onMovieSelect, buttonText = "Add to Watchlist" }) => {
           setError('No movies available');
         }
       } catch (error) {
-        setError(error.response?.data?.error || 'Failed to fetch movies');
         console.error('Error fetching movies:', error);
       } finally {
         setIsLoading(false);

@@ -93,6 +93,46 @@
   flex-grow: 1;
 }
 
+/* Large screens (desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  .video-container {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+}
+
+/* Medium screens (tablets, laptops, 768px to 1199px) */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .video-container {
+    max-width: 100%;
+    height: auto;
+    min-height: 400px;
+  }
+}
+
+/* Small screens (mobile devices, 480px to 767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+  .video-container {
+    height: auto;
+    min-height: 300px;
+  }
+}
+
+/* Extra small screens (small mobile devices, below 480px) */
+@media (max-width: 479px) {
+  .video-container {
+    height: auto;
+    min-height: 200px;
+  }
+}
+
+/* Ensure aspect ratio is maintained across all devices */
+@media (max-width: 767px) {
+  .video-container {
+    aspect-ratio: 16 / 9;
+  }
+}
+
 .chat-section {
   flex: 1 1 0;
   min-height: 300px;

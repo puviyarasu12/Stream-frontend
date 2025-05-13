@@ -192,7 +192,58 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     await joinRoom(inviteCode);
   };
 
-  // Removed socket and video sync useEffect and updateMovieState function
+  // Socket and video sync
+  useEffect(() => {
+    if (joined) {
+      fetchRoomState();
+      if (!socket.connected) socket.connect();
+      socket.emit('join-room', room._id);
+
+      socket.on('video-sync', (videoState) => {
+        setMovie(videoState);
+        setIsPlaying(videoState.isPlaying);
+        if (playerRef.current) {
+          const currentTime = playerRef.current.getCurrentTime();
+          console.log(`[video-sync] currentTime: ${currentTime}, videoState.currentTime: ${videoState.currentTime}`);
+          const timeDiff = currentTime - videoState.currentTime;
+          // Only seek if difference is greater than 1 second and avoid repeated seeking backward
+          if (Math.abs(timeDiff) > 1) {
+            // Prevent seeking backward repeatedly if currentTime is just slightly ahead
+            if (!(timeDiff > 0 && timeDiff < 3)) {
+              playerRef.current.seekTo(videoState.currentTime);
+              console.log(`[video-sync] Seeking to ${videoState.currentTime}`);
+            }
+          }
+        }
+        lastUpdateTime.current = videoState.currentTime;
+      });
+    }
+
+    return () => {
+      socket.emit('leave-room', room._id);
+      socket.off('video-sync');
+    };
+  }, [fetchRoomState, joined, room._id]);
+
+  const updateMovieState = async (currentTime, playing) => {
+    try {
+      isUserAction.current = true;
+      lastUpdateTime.current = currentTime;
+      const videoState = {
+        currentTime,
+        isPlaying: playing,
+        title: movie?.title,
+        url: movie?.url,
+        timestamp: Date.now(),
+      };
+      await api.patch(`/rooms/${room._id}/movie`, videoState);
+      socket.emit('video-sync', { roomId: room._id, videoState });
+      setError(null);
+    } catch (error) {
+      setError('Error updating movie state');
+      isUserAction.current = false;
+    }
+  };
 
   const handleMovieSelect = async (selectedMovie) => {
     try {
@@ -408,11 +459,11 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
                 onProgress={handleProgress}
                 onPlay={() => {
                   setIsPlaying(true);
-                  // Removed updateMovieState call
+                  updateMovieState(playerRef.current?.getCurrentTime() || 0, true);
                 }}
                 onPause={() => {
                   setIsPlaying(false);
-                  // Removed updateMovieState call
+                  updateMovieState(playerRef.current?.getCurrentTime() || 0, false);
                 }}
                 onError={() => {
                   setError('Error playing video. Please try another URL.');

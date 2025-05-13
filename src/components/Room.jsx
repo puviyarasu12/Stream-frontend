@@ -204,8 +204,15 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
         setIsPlaying(videoState.isPlaying);
         if (playerRef.current) {
           const currentTime = playerRef.current.getCurrentTime();
-          if (Math.abs(currentTime - videoState.currentTime) > 1) {
-            playerRef.current.seekTo(videoState.currentTime);
+          console.log(`[video-sync] currentTime: ${currentTime}, videoState.currentTime: ${videoState.currentTime}`);
+          const timeDiff = currentTime - videoState.currentTime;
+          // Only seek if difference is greater than 1 second and avoid repeated seeking backward
+          if (Math.abs(timeDiff) > 1) {
+            // Prevent seeking backward repeatedly if currentTime is just slightly ahead
+            if (!(timeDiff > 0 && timeDiff < 3)) {
+              playerRef.current.seekTo(videoState.currentTime);
+              console.log(`[video-sync] Seeking to ${videoState.currentTime}`);
+            }
           }
         }
         lastUpdateTime.current = videoState.currentTime;

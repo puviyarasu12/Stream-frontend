@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import RandomMovie from './RandomMovie';
 import MovieDetails from './MovieDetails';
@@ -11,6 +11,31 @@ const MovieSearch = ({ onMovieSelect, buttonText = "Add to Watchlist" }) => {
   const [error, setError] = useState(null);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [imageErrors, setImageErrors] = useState({});
+
+  useEffect(() => {
+    // Fetch all movies on initial load or when searchQuery is empty
+    const fetchAllMovies = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await api.get('/movies');
+        const results = Array.isArray(response.data) ? response.data : [];
+        setSearchResults(results);
+        if (results.length === 0) {
+          setError('No movies available');
+        }
+      } catch (error) {
+        setError(error.response?.data?.error || 'Failed to fetch movies');
+        console.error('Error fetching movies:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (searchQuery.trim() === '') {
+      fetchAllMovies();
+    }
+  }, [searchQuery]);
 
   const getRatingClass = (rated) => {
     switch (rated) {
@@ -27,6 +52,25 @@ const MovieSearch = ({ onMovieSelect, buttonText = "Add to Watchlist" }) => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    if (searchQuery.trim() === '') {
+      // If search query is empty, fetch all movies
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await api.get('/movies');
+        const results = Array.isArray(response.data) ? response.data : [];
+        setSearchResults(results);
+        if (results.length === 0) {
+          setError('No movies available');
+        }
+      } catch (error) {
+        setError(error.response?.data?.error || 'Failed to fetch movies');
+        console.error('Error fetching movies:', error);
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {

@@ -83,7 +83,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
       <header className="site-header" role="banner">
         <div className="header-container">
           <div className="logo" role="img" aria-label="Stream Mate Logo">
-            Stream Mate
+            
           </div>
           <button
             className="hamburger-button"
@@ -120,7 +120,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
       <main className="home-container" role="main">
         <section className="hero" aria-labelledby="hero-title">
           <h1 id="hero-title" className="hero-title">
-            Welcome to Stream Mate
+            Welcome to StreamMate
           </h1>
           <p className="hero-subtitle">
             Your ultimate platform for streaming and social movie experiences. Connect, watch, and share with friends in real-time.
@@ -141,7 +141,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
             About Project
           </h2>
           <p className="section-text">
-            Stream Mate is a social movie streaming platform that allows users to connect, watch, and share movies in real-time with friends and family. It features synchronized playback, chat, trivia games, and more to enhance the shared viewing experience.
+            StreamMate is a social movie streaming platform that allows users to connect, watch, and share movies in real-time with friends and family. It features synchronized playback, chat, trivia games, and more to enhance the shared viewing experience.
           </p>
         </section>
 

@@ -199,13 +199,25 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       if (!socket.connected) socket.connect();
       socket.emit('join-room', room._id);
 
+      let backwardSeekCount = 0;
+      let pauseCount = 0;
+      let syncDisabled = false;
+
       socket.on('video-sync', (videoState) => {
+        if (syncDisabled) return;
+
         setMovie(videoState);
         setIsPlaying(videoState.isPlaying);
         if (playerRef.current) {
           const currentTime = playerRef.current.getCurrentTime();
           console.log(`[video-sync] currentTime: ${currentTime}, videoState.currentTime: ${videoState.currentTime}`);
           const timeDiff = currentTime - videoState.currentTime;
+
+          if (timeDiff > 0) {
+            backwardSeekCount++;
+            console.log(`[video-sync] backwardSeekCount: ${backwardSeekCount}`);
+          }
+
           // Only seek if difference is greater than 1 second and avoid repeated seeking backward
           if (Math.abs(timeDiff) > 1) {
             // Prevent seeking backward repeatedly if currentTime is just slightly ahead
@@ -214,24 +226,37 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
               console.log(`[video-sync] Seeking to ${videoState.currentTime}`);
             }
           }
+
+          if (backwardSeekCount > 2) {
+            console.log('[video-sync] backwardSeekCount exceeded 2, pausing and playing to resync');
+            playerRef.current.pause();
+            setTimeout(() => {
+              playerRef.current.play();
+            }, 500);
+            backwardSeekCount = 0;
+          }
         }
         lastUpdateTime.current = videoState.currentTime;
       });
-    }
 
-    return () => {
-      socket.emit('leave-room', room._id);
-      socket.off('video-sync');
-    };
+      const handlePause = () => {
+        pauseCount++;
+        console.log(`[video-sync] pauseCount: ${pauseCount}`);
+        if (pauseCount > 3) {
+          console.log('[video-sync] pauseCount exceeded 3, disabling sync');
+          syncDisabled = true;
+        }
+      };
+
+      playerRef.current?.getInternalPlayer()?.addEventListener('pause', handlePause);
+
+      return () => {
+        socket.emit('leave-room', room._id);
+        socket.off('video-sync');
+        playerRef.current?.getInternalPlayer()?.removeEventListener('pause', handlePause);
+      };
+    }
   }, [fetchRoomState, joined, room._id]);
-
-  // Redirect for private rooms
-  useEffect(() => {
-    if (room.isPrivate && !joined) {
-      console.log('Redirecting to /zone because user is not joined');
-      navigate('/zone');
-    }
-  }, [room.isPrivate, joined, navigate]);
 
   const updateMovieState = async (currentTime, playing) => {
     try {

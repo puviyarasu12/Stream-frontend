@@ -67,7 +67,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
       id: 1,
       name: 'John Smith',
       role: 'Tech Geek',
-      text: 'StreamMate makes movie nights with friends seamless and fun!',
+      text: 'StreamNest makes movie nights with friends seamless and fun!',
     },
     {
       id: 2,
@@ -83,7 +83,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
       <header className="site-header" role="banner">
         <div className="header-container">
           <div className="logo" role="img" aria-label="Stream Mate Logo">
-            Stream Mate
+            StreamNest
           </div>
           <button
             className="hamburger-button"
@@ -117,7 +117,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
       <main className="home-container" role="main">
         <section className="hero" aria-labelledby="hero-title">
           <h1 id="hero-title" className="hero-title">
-            Welcome to Stream Mate
+            Welcome to StreamNest
           </h1>
           <p className="hero-subtitle">
             Your ultimate platform for streaming and social movie experiences. Connect, watch, and share with friends in real-time.
@@ -138,7 +138,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
             About Project
           </h2>
           <p className="section-text">
-            Stream Mate is a social movie streaming platform that allows users to connect, watch, and share movies in real-time with friends and family. It features synchronized playback, chat, trivia games, and more to enhance the shared viewing experience.
+            StreamNest is a social movie streaming platform that allows users to connect, watch, and share movies in real-time with friends and family. It features synchronized playback, chat, trivia games, and more to enhance the shared viewing experience.
           </p>
         </section>
 
@@ -176,20 +176,20 @@ const Home = ({ isAuthenticated, onNavigate }) => {
             <div className="faq-container">
               {[
                 {
-                  question: 'How does StreamMate work?',
-                  answer: 'StreamMate lets you create or join virtual rooms for real-time movie watching with synced playback, trivia, and chat.',
+                  question: 'How does StreamNest work?',
+                  answer: 'StreamNest lets you create or join virtual rooms for real-time movie watching with synced playback, trivia, and chat.',
                 },
                 {
-                  question: 'Is StreamMate free to use?',
+                  question: 'Is StreamNest free to use?',
                   answer: 'Yes, with a free tier for core features. Premium plans offer more functionality.',
                 },
                 {
                   question: 'What devices are supported?',
-                  answer: 'StreamMate works on desktops, tablets, and mobiles via modern web browsers.',
+                  answer: 'StreamNest works on desktops, tablets, and mobiles via modern web browsers.',
                 },
                 {
                   question: 'Can I watch movies internationally?',
-                  answer: 'Yes, StreamMate supports global watch parties with perfect sync.',
+                  answer: 'Yes, StreamNest supports global watch parties with perfect sync.',
                 },
               ].map((faq, index) => (
                 <div key={index} className="faq-item">
@@ -233,7 +233,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
               Ready to Start Your Movie Night?
             </h2>
             <p className="cta-text">
-              Join StreamMate today for unforgettable movie experiences with friends.
+              Join StreamNest today for unforgettable movie experiences with friends.
             </p>
             <div className="hero-buttons">
               <button
@@ -276,7 +276,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
         <div className="container">
           <div className="footer-grid">
             <div className="footer-section">
-              <h3 className="footer-title">StreamMate</h3>
+              <h3 className="footer-title">StreamNest</h3>
               <p className="footer-text">
                 Bringing friends together through shared movie experiences since 2025.
               </p>
@@ -341,7 +341,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
             </div>
             <div className="footer-section">
               <h3 className="footer-title">Contact</h3>
-              <p className="footer-text">Email: support@streammate.com</p>
+              <p className="footer-text">Email: support@streamnest.com</p>
               <p className="footer-text">Phone: (123) 456-7890</p>
               <p className="footer-text">Address: 123 Movie St, Cinema City, USA</p>
             </div>

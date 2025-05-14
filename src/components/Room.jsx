@@ -51,9 +51,9 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
   const playerRef = useRef(null);
   const lastUpdateTime = useRef(0);
   const isUserAction = useRef(false);
-  const lastSyncTimestamp = useRef(0); // New: Track the latest sync event timestamp
-  const syncBuffer = 0.1; // Reduced buffer to minimize jitter
-  const seekThreshold = 5; // Increased to 5 seconds to allow acceptable sync tolerance
+  const lastSyncTimestamp = useRef(0);
+  const syncBuffer = 0.1;
+  const seekThreshold = 5;
 
   // Fetch invite code for creator
   const fetchInviteCode = useCallback(async () => {
@@ -169,7 +169,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
 
   // Auto-join and fetch invite code for creator
   useEffect(() => {
-    if (user && room.creator?._id && user._id && room.creator?._id.toString() === user._id.toString() && !joined) {
+    if (user && room.creator?._id && user._id && room.creator._id.toString() === user._id.toString() && !joined) {
       console.log('Auto-joining room for creator');
       joinRoom('');
     }
@@ -197,14 +197,12 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
   useEffect(() => {
     if (!joined) return;
 
-    // Initial fetch to ensure room state is up-to-date
     fetchRoomState();
     if (!socket.connected) socket.connect();
     socket.emit('join-room', room._id);
 
-    // Track recent sync events to debounce rapid updates
     const syncTimestamps = [];
-    const maxSyncFrequency = 1000; // Increased to 1000ms to reduce sync frequency
+    const maxSyncFrequency = 1000;
 
     socket.on('video-sync', (videoState) => {
       if (isUserAction.current) {
@@ -212,7 +210,6 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
         return;
       }
 
-      // Ignore stale sync events
       if (videoState.timestamp <= lastSyncTimestamp.current) {
         console.log('[video-sync] Ignoring stale sync event');
         return;
@@ -220,13 +217,12 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       lastSyncTimestamp.current = videoState.timestamp;
 
       const now = Date.now();
-      // Debounce: Ignore sync if too frequent
       if (syncTimestamps.length > 0 && now - syncTimestamps[syncTimestamps.length - 1] < maxSyncFrequency) {
         console.log('[video-sync] Ignoring sync due to debounce');
         return;
       }
       syncTimestamps.push(now);
-      if (syncTimestamps.length > 5) syncTimestamps.shift(); // Keep last 5 timestamps
+      if (syncTimestamps.length > 5) syncTimestamps.shift();
 
       setMovie(videoState);
       setIsPlaying(videoState.isPlaying);
@@ -236,9 +232,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
         const timeDiff = currentTime - videoState.currentTime;
         console.log(`[video-sync] currentTime: ${currentTime}, videoState.currentTime: ${videoState.currentTime}, timeDiff: ${timeDiff}`);
 
-        // Only seek if difference exceeds 5-second threshold
         if (Math.abs(timeDiff) > seekThreshold) {
-          // Allow client to be slightly ahead within tolerance
           if (timeDiff > 0 && timeDiff <= seekThreshold) {
             console.log('[video-sync] Ignoring small positive timeDiff within tolerance');
             return;
@@ -259,7 +253,6 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
   // Update movie state with user actions
   const updateMovieState = async (currentTime, playing) => {
     try {
-      // Only emit sync if time difference is significant (e.g., >1 second)
       if (Math.abs(currentTime - lastUpdateTime.current) < 1) {
         console.log('[updateMovieState] Skipping sync due to insignificant time change');
         return;
@@ -277,7 +270,6 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       await api.patch(`/rooms/${room._id}/movie`, videoState);
       socket.emit('video-sync', { roomId: room._id, videoState });
       setError(null);
-      // Reset user action flag after a short delay to allow sync
       setTimeout(() => {
         isUserAction.current = false;
       }, 1000);
@@ -432,9 +424,12 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
             </div>
 
             {showWatchlist && (
-              <div className="overwatchlist-section" style={{ overflowY: 'auto', minHeight: '200px' }}>
+              <div className="watchlist-section" style={{ overflowY: 'auto', minHeight: '200px' }}>
                 <h3>Watchlist</h3>
-                <div className="room-watchlist-controls" style={{ marginBottom: '1rem', overflow: 'visible', minHeight: '100px' }}>
+                <div
+                  className="watchlist-controls"
+                  style={{ marginBottom: '1rem', overflow: 'visible', minHeight: '100px' }}
+                >
                   <div style={{ overflowY: 'auto', maxHeight: '300px' }}>
                     <MovieSearch onMovieSelect={handleMovieSelect} buttonText="Add to Zone Watchlist" />
                   </div>
@@ -468,7 +463,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
                             <span>{item.movie.title[0]}</span>
                           </div>
                         )}
-                        <div className="overwatchlist-info">
+                        <div className="watchlist-info">
                           <h4>
                             {item.movie.title} ({item.movie.year})
                           </h4>

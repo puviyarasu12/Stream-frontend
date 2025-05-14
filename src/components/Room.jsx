@@ -12,7 +12,7 @@ import '../styles/room.css';
 const Room = ({ room, user: propUser, onLeaveRoom }) => {
   const navigate = useNavigate();
 
-  // User handling (unchanged)
+  // User handling
   let user = propUser;
   if (!user) {
     try {
@@ -30,7 +30,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     user._id = user.userId;
   }
 
-  // State (unchanged)
+  // State
   const [movie, setMovie] = useState(room.movie || null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [participants, setParticipants] = useState(room.participants || []);
@@ -54,7 +54,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
   const syncBuffer = 0.5; // Buffer to allow minor time differences (in seconds)
   const seekThreshold = 1; // Minimum time difference to trigger a seek (in seconds)
 
-  // Fetch invite code for creator (unchanged)
+  // Fetch invite code for creator
   const fetchInviteCode = useCallback(async () => {
     if (room.isPrivate && user && room.creator?._id && user._id && room.creator._id.toString() === user._id.toString()) {
       try {
@@ -67,7 +67,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     }
   }, [room._id, room.isPrivate, user, room.creator?._id]);
 
-  // Join room logic (unchanged)
+  // Join room logic
   const joinRoom = useCallback(
     async (code) => {
       try {
@@ -98,7 +98,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     [room._id, room.creator, user]
   );
 
-  // Copy invite code to clipboard (unchanged)
+  // Copy invite code to clipboard
   const handleCopyInviteCode = async () => {
     try {
       await navigator.clipboard.writeText(inviteCode);
@@ -118,7 +118,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     setSelectedMovie(null);
   };
 
-  // Fetch room state (modified to reduce polling)
+  // Fetch room state
   const fetchRoomState = useCallback(
     async () => {
       if (room.isPrivate && !joined) return;
@@ -130,7 +130,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
         setError(null);
 
         // Only update movie state if it differs significantly
-        if (roomDataopolitan movie && (!movie || roomData.movie.url !== movie.url)) {
+        if (roomData.movie && (!movie || roomData.movie.url !== movie.url)) {
           setMovie(roomData.movie);
           setIsPlaying(roomData.movie.isPlaying);
           if (playerRef.current) {
@@ -166,7 +166,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     [room._id, room.isPrivate, joined, onLeaveRoom, movie]
   );
 
-  // Auto-join and fetch invite code for creator (unchanged)
+  // Auto-join and fetch invite code for creator
   useEffect(() => {
     if (user && room.creator?._id && user._id && room.creator._id.toString() === user._id.toString() && !joined) {
       console.log('Auto-joining room for creator');
@@ -177,12 +177,12 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     }
   }, [user, room.creator, joined, joinRoom, fetchInviteCode, room.isPrivate]);
 
-  // Handle invite code input change (unchanged)
+  // Handle invite code input change
   const handleInviteCodeChange = (e) => {
     setInviteCode(e.target.value);
   };
 
-  // Handle invite code form submit (unchanged)
+  // Handle invite code form submit
   const handleInviteCodeSubmit = async (e) => {
     e.preventDefault();
     if (!inviteCode) {
@@ -192,7 +192,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     await joinRoom(inviteCode);
   };
 
-  // Socket and video sync (optimized)
+  // Socket and video sync
   useEffect(() => {
     if (!joined) return;
 
@@ -248,7 +248,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     };
   }, [joined, room._id, fetchRoomState]);
 
-  // Update movie state with user actions (optimized)
+  // Update movie state with user actions
   const updateMovieState = async (currentTime, playing) => {
     try {
       isUserAction.current = true;

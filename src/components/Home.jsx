@@ -166,6 +166,31 @@ const Home = ({ isAuthenticated, onNavigate }) => {
           <a href="/rooms" className="browse-rooms-button">
             Browse Public Zones
           </a>
+          <button
+            className="quick-join-button"
+            onClick={async () => {
+              try {
+                const response = await fetch('/api/rooms/random/active', {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                  },
+                });
+                if (!response.ok) {
+                  const errorData = await response.json();
+                  alert(errorData.error || 'Failed to join a random room');
+                  return;
+                }
+                const room = await response.json();
+                window.location.href = `/room/${room._id}`;
+              } catch (error) {
+                alert('Error joining random room');
+                console.error(error);
+              }
+            }}
+            aria-label="Quick join a random active room"
+          >
+            Quick Join Random Room
+          </button>
         </section>
 
         <section id="faq" className="section faq" aria-labelledby="faq-title">

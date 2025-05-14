@@ -177,6 +177,21 @@ const RoomList = ({ onRoomSelect, user }) => {
           <button type="submit" className="join-room-btn">Join Private Zone</button>
         </form>
         {joinError && <div className="error-state">{joinError}</div>}
+        <button
+          className="quick-join-button"
+          onClick={async () => {
+            try {
+              const response = await api.get('/rooms/random/active');
+              onRoomSelect(response.data);
+            } catch (error) {
+              alert('Failed to join a random zone. Please try again.');
+              console.error(error);
+            }
+          }}
+          aria-label="Quick join a random active zone"
+        >
+          Quick Join Random Zone
+        </button>
       </div>
 
       <div className="room-search">

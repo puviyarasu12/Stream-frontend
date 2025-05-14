@@ -192,6 +192,11 @@ const MovieDetails = ({ movie, onClose, onSelect, buttonText = 'Select Movie' })
             <p style={styles.movieInfoText}><strong>Runtime:</strong> {movie.runtime || 'Not available'}</p>
             <p style={styles.movieInfoText}><strong>Rating:</strong> {movie.rating ? `${movie.rating}/10` : 'Not rated'}</p>
             <p style={styles.movieInfoText}><strong>Plot:</strong> {movie.plot || 'No plot available'}</p>
+            {aiSummary && (
+              <p style={{ ...styles.movieInfoText, marginTop: '10px', fontStyle: 'italic' }}>
+                <strong>AI Summary:</strong> {aiSummary}
+              </p>
+            )}
           </div>
         </div>
         <div style={styles.modalFooter}>

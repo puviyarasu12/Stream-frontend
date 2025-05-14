@@ -51,8 +51,9 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
   const playerRef = useRef(null);
   const lastUpdateTime = useRef(0);
   const isUserAction = useRef(false);
-  const syncBuffer = 0.5; // Buffer to allow minor time differences (in seconds)
-  const seekThreshold = 1; // Minimum time difference to trigger a seek (in seconds)
+  const lastSyncTimestamp = useRef(0); // New: Track the latest sync event timestamp
+  const syncBuffer = 0.1; // Reduced buffer to minimize jitter
+  const seekThreshold = 5; // Increased to 5 seconds to allow acceptable sync tolerance
 
   // Fetch invite code for creator
   const fetchInviteCode = useCallback(async () => {
@@ -168,7 +169,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
 
   // Auto-join and fetch invite code for creator
   useEffect(() => {
-    if (user && room.creator?._id && user._id && room.creator._id.toString() === user._id.toString() && !joined) {
+    if (user && room.creator?._id && user._id && room.creator?._id.toString() === user._id.toString() && !joined) {
       console.log('Auto-joining room for creator');
       joinRoom('');
     }
@@ -203,13 +204,20 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
 
     // Track recent sync events to debounce rapid updates
     const syncTimestamps = [];
-    const maxSyncFrequency = 500; // Minimum time between syncs (ms)
+    const maxSyncFrequency = 1000; // Increased to 1000ms to reduce sync frequency
 
     socket.on('video-sync', (videoState) => {
       if (isUserAction.current) {
         console.log('[video-sync] Ignoring sync due to user action');
         return;
       }
+
+      // Ignore stale sync events
+      if (videoState.timestamp <= lastSyncTimestamp.current) {
+        console.log('[video-sync] Ignoring stale sync event');
+        return;
+      }
+      lastSyncTimestamp.current = videoState.timestamp;
 
       const now = Date.now();
       // Debounce: Ignore sync if too frequent
@@ -223,16 +231,16 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       setMovie(videoState);
       setIsPlaying(videoState.isPlaying);
 
-      if (playerRef.current) {
+      if (playerRef.current && videoState.isPlaying) {
         const currentTime = playerRef.current.getCurrentTime();
         const timeDiff = currentTime - videoState.currentTime;
         console.log(`[video-sync] currentTime: ${currentTime}, videoState.currentTime: ${videoState.currentTime}, timeDiff: ${timeDiff}`);
 
-        // Only seek if difference exceeds threshold and is outside buffer
+        // Only seek if difference exceeds 5-second threshold
         if (Math.abs(timeDiff) > seekThreshold) {
-          // Allow small positive differences (client slightly ahead) to avoid jitter
-          if (timeDiff > 0 && timeDiff < 3) {
-            console.log('[video-sync] Ignoring small positive timeDiff');
+          // Allow client to be slightly ahead within tolerance
+          if (timeDiff > 0 && timeDiff <= seekThreshold) {
+            console.log('[video-sync] Ignoring small positive timeDiff within tolerance');
             return;
           }
           playerRef.current.seekTo(videoState.currentTime + syncBuffer);
@@ -251,6 +259,12 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
   // Update movie state with user actions
   const updateMovieState = async (currentTime, playing) => {
     try {
+      // Only emit sync if time difference is significant (e.g., >1 second)
+      if (Math.abs(currentTime - lastUpdateTime.current) < 1) {
+        console.log('[updateMovieState] Skipping sync due to insignificant time change');
+        return;
+      }
+
       isUserAction.current = true;
       lastUpdateTime.current = currentTime;
       const videoState = {
@@ -262,6 +276,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       };
       await api.patch(`/rooms/${room._id}/movie`, videoState);
       socket.emit('video-sync', { roomId: room._id, videoState });
+      setParticipants(roomData.participants);
       setError(null);
       // Reset user action flag after a short delay to allow sync
       setTimeout(() => {
@@ -418,12 +433,9 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
             </div>
 
             {showWatchlist && (
-              <div className="watchlist-section" style={{ overflowY: 'auto', minHeight: '200px' }}>
+              <div className="overwatchlist-section" style={{ overflowY: 'auto', minHeight: '200px' }}>
                 <h3>Watchlist</h3>
-                <div
-                  className="watchlist-controls"
-                  style={{ marginBottom: '1rem', overflow: 'visible', minHeight: '100px' }}
-                >
+                <div className="room-watchlist-controls" style={{ marginBottom: '1rem', overflow: 'visible', minHeight: '100px' }}>
                   <div style={{ overflowY: 'auto', maxHeight: '300px' }}>
                     <MovieSearch onMovieSelect={handleMovieSelect} buttonText="Add to Zone Watchlist" />
                   </div>
@@ -457,7 +469,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
                             <span>{item.movie.title[0]}</span>
                           </div>
                         )}
-                        <div className="watchlist-info">
+                        <div className="overwatchlist-info">
                           <h4>
                             {item.movie.title} ({item.movie.year})
                           </h4>

@@ -99,7 +99,7 @@ function App() {
             path="*"
             element={
               <header className="header">
-                <h1 className="title">StreamMate</h1>
+                <h1 className="title">StreamNest</h1>
                 <div className="nav-buttons">
                   <button className="nav-button" onClick={() => window.location.href = '/'}>
                     Home

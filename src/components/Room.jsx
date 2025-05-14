@@ -276,7 +276,6 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       };
       await api.patch(`/rooms/${room._id}/movie`, videoState);
       socket.emit('video-sync', { roomId: room._id, videoState });
-      setParticipants(roomData.participants);
       setError(null);
       // Reset user action flag after a short delay to allow sync
       setTimeout(() => {

@@ -142,7 +142,11 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       } catch (error) {
         console.error('Fetch room state error:', error.response?.data, error.response?.status);
         if (error.response?.status === 403) {
-          setError(error.response.data.error.includes('banned') ? 'You are banned from this room.' : 'You are not authorized to access this room.');
+          setError(
+            error.response.data.error.includes('banned')
+              ? 'You are banned from this room.'
+              : 'You are not authorized to access this room.'
+          );
           setTimeout(() => {
             if (typeof onLeaveRoom === 'function') onLeaveRoom();
             else console.error('onLeaveRoom is not a function');
@@ -195,7 +199,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
 
   // Socket and video sync
   useEffect(() => {
-    if (!joined) return;
+    if (!joined || room.isPrivate) return;
 
     fetchRoomState();
     if (!socket.connected) socket.connect();
@@ -230,7 +234,9 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       if (playerRef.current && videoState.isPlaying) {
         const currentTime = playerRef.current.getCurrentTime();
         const timeDiff = currentTime - videoState.currentTime;
-        console.log(`[video-sync] currentTime: ${currentTime}, videoState.currentTime: ${videoState.currentTime}, timeDiff: ${timeDiff}`);
+        console.log(
+          `[video-sync] currentTime: ${currentTime}, videoState.currentTime: ${videoState.currentTime}, timeDiff: ${timeDiff}`
+        );
 
         if (Math.abs(timeDiff) > seekThreshold) {
           if (timeDiff > 0 && timeDiff <= seekThreshold) {
@@ -307,13 +313,33 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
   const handleCustomUrlSubmit = (e) => {
     e.preventDefault();
     console.log('Custom URL submitted:', customUrl);
-    if (ReactPlayer.canPlay(customUrl)) {
+
+    // List of domains that should be rendered in an iframe
+    const supportedEmbedDomains = [
+      'vidmoly.to',
+      'dhcplay.com',
+      'play.onestream.watch',
+      'play.bunnycdn.to', // Added to support BunnyCDN embeds
+    ];
+
+    // Check if the URL is from a supported embed domain
+    const isEmbedUrl = supportedEmbedDomains.some((domain) => customUrl.includes(domain));
+
+    if (isEmbedUrl) {
+      console.log('Rendering URL in iframe:', customUrl);
+      setMovie({ url: customUrl, title: 'Custom Video' });
+      setError(null);
+      setCustomUrl('');
+    } else if (ReactPlayer.canPlay(customUrl)) {
+      console.log('Rendering URL with ReactPlayer:', customUrl);
       setMovie({ url: customUrl, title: 'Custom Video' });
       setError(null);
       setCustomUrl('');
     } else {
       console.error('Invalid video URL:', customUrl);
-      setError('Please enter a valid video URL');
+      setError(
+        'Unsupported video URL. Please use a supported platform (e.g., YouTube, Vimeo, Vidmoly, BunnyCDN) or a valid embed link.'
+      );
     }
   };
 
@@ -409,6 +435,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
                 <button
                   onClick={() => setShowWatchlist(!showWatchlist)}
                   className="toggle-watchlist-btn btn btn--secondary"
+불편한
                 >
                   {showWatchlist ? 'Hide Watchlist' : 'Show Watchlist'}
                 </button>
@@ -483,34 +510,55 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
         <div className="video-section">
           {movie ? (
             <div className="video-container">
-              <ReactPlayer
-                ref={playerRef}
-                url={movie.url}
-                playing={isPlaying}
-                controls={true}
-                width="100%"
-                height="100%"
-                onProgress={handleProgress}
-                onPlay={() => {
-                  setIsPlaying(true);
-                  updateMovieState(playerRef.current?.getCurrentTime() || 0, true);
-                }}
-                onPause={() => {
-                  setIsPlaying(false);
-                  updateMovieState(playerRef.current?.getCurrentTime() || 0, false);
-                }}
-                onError={() => {
-                  setError('Error playing video. Please try another URL.');
-                }}
-                config={{
-                  youtube: {
-                    playerVars: {
-                      origin: window.location.origin,
-                      enablejsapi: 1,
+              {movie.url &&
+              (movie.url.includes('vidmoly.to') ||
+                movie.url.includes('dhcplay.com') ||
+                movie.url.includes('play.onestream.watch') ||
+                movie.url.includes('play.bunnycdn.to')) ? (
+                <iframe
+                  src={movie.url}
+                  title={movie.title || 'Video Player'}
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  // Comment out sandbox for testing if BunnyCDN fails to load
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                  onError={() => {
+                    setError('Failed to load video. Please check the URL or try another.');
+                  }}
+                />
+              ) : (
+                <ReactPlayer
+                  ref={playerRef}
+                  url={movie.url}
+                  playing={isPlaying}
+                  controls={true}
+                  width="100%"
+                  height="100%"
+                  onProgress={handleProgress}
+                  onPlay={() => {
+                    setIsPlaying(true);
+                    updateMovieState(playerRef.current?.getCurrentTime() || 0, true);
+                  }}
+                  onPause={() => {
+                    setIsPlaying(false);
+                    updateMovieState(playerRef.current?.getCurrentTime() || 0, false);
+                  }}
+                  onError={() => {
+                    setError('Error playing video. Please try another URL.');
+                  }}
+                  config={{
+                    youtube: {
+                      playerVars: {
+                        origin: window.location.origin,
+                        enablejsapi: 1,
+                      },
                     },
-                  },
-                }}
-              />
+                  }}
+                />
+              )}
             </div>
           ) : (
             <div className="movie-selection" style={{ overflowY: 'auto', minHeight: '200px' }}>
@@ -519,11 +567,20 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
                   type="text"
                   value={customUrl}
                   onChange={(e) => setCustomUrl(e.target.value)}
-                  placeholder="Enter video URL (YouTube, Vimeo, etc.)"
+                  placeholder="Enter video URL (YouTube, Vimeo, Vidmoly, BunnyCDN, etc.)"
                   className="url-input"
                 />
                 <button type="submit" className="btn btn--primary">Play Video</button>
               </form>
+              {error && (
+                <div className="error-message">
+                  {error}
+                  <br />
+                  <a href={customUrl} target="_blank" rel="noopener noreferrer">
+                    Try opening the video in a new tab
+                  </a>
+                </div>
+              )}
               <div className="movie-search-section" style={{ overflow: 'visible', minHeight: '150px' }}>
                 <div style={{ overflowY: 'auto', maxHeight: '300px' }}>
                   <MovieSearch onMovieSelect={handleMovieSelect} buttonText="Add to Zone Watchlist" />

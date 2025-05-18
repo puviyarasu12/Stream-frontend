@@ -189,72 +189,129 @@
   }
 }
 
-/* AoT-themed CSS for the loading screen */
 .loading-screen {
-  /* Full-screen centering with a dark, gritty background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #1a1f1e; /* Dark gray-green, reminiscent of Wall Maria's stone */
-  background-image: linear-gradient(
-      rgba(0, 0, 0, 0.5),
-      rgba(0, 0, 0, 0.5)
-    ),
-    url('https://w0.peakpx.com/wallpaper/991/573/HD-wallpaper-attack-on-titan-anime-japan-omfg-they-are-in-the-wall-the-wall-titan.jpg'); /* Optional: replace with a stone wall texture */
-  background-size: cover;
-  background-position: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 9999; /* Ensure it overlays other content */
-}
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #1a1f1e;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        url('https://w0.peakpx.com/wallpaper/991/573/HD-wallpaper-attack-on-titan-anime-japan-omfg-they-are-in-the-wall-the-wall-titan.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+      overflow: hidden;
+      transition: opacity 1s ease-out;
+      will-change: opacity;
+    }
 
-/* Styling the loading text */
-.loading-screen p {
-  font-family: 'Cinzel', serif; /* A bold, medieval-style font similar to AoT's title */
-  font-size: 2.5rem;
-  color: #e4d6a7; /* Parchment-like off-white for text, evoking old maps */
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Shadow for depth */
-  position: relative;
-  animation: pulse 2s infinite ease-in-out; /* Subtle pulsing animation */
-}
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
 
-/* Pulsing animation for the loading text */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
+    .loading-screen::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+      top: 0;
+      left: 0;
+      animation: crackWaveFlash 3s infinite ease-in-out;z-index: 1;
+      pointer-events: none;
+      will-change: opacity;
+    }
 
-/* Optional: Add a Survey Corps emblem as a subtle background element */
-.loading-screen::before {
-  content: '';
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  background-image: url('https://w7.pngwing.com/pngs/622/129/png-transparent-eren-yeager-mikasa-ackerman-levi-strauss-co-attack-on-titan-levis-manga-cartoon-fictional-character.png'); /* Replace with Survey Corps logo */
-  background-size: contain;
-  background-repeat: no-repeat;
-  opacity: 0.2;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1; /* Behind the text */
-}
+    .loading-screen p {
+      font-family: 'Cinzel', serif;
+      font-size: 2.5rem;
+      color: #f0e4b5;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px rgba(240, 228, 181, 1), 2px 2px 6px rgba(0, 0, 0, 0.9);
+      position: relative;
+      animation: intensePulse 1s infinite ease-in-out;
+      z-index: 3;
+      margin: 0;
+    }
 
+    .odm-trail {
+      position: absolute;
+      width: 180px;
+      height: 45px;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(180, 180, 180, 0.7), rgba(255, 215, 0, 0.5));
+      top: 60%;
+      left: -180px;
+      animation: smokeTrail 1.8s infinite linear;
+      filter: blur(6px);
+      z-index: 2;
+      will-change: transform, opacity;
+    }
+
+    .second-trail {
+      position: absolute;
+      width: 160px;
+      height: 40px;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(180, 180, 180, 0.6), rgba(255, 215, 0, 0.4));
+      top: 65%;
+      left: -160px;
+      animation: smokeTrail 1.8s infinite linear 0.5s;
+      filter: blur(6px);
+      z-index: 2;
+      will-change: transform, opacity;
+    }
+
+    .third-trail {
+      position: absolute; width: 170px;
+      height: 42px;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(180, 180, 180, 0.65), rgba(255, 215, 0, 0.45));
+      top: 55%;
+      left: -170px;
+      animation: smokeTrail 2s infinite linear 0.3s;
+      filter: blur(7px);
+      z-index: 2;
+      will-change: transform, opacity;
+    }
+
+    @keyframes smokeTrail {
+      0% { transform: translateX(-180px) scale(1); opacity: 0.7; }
+      50% { transform: translateX(50vw) scale(1.15); opacity: 0.9; }
+      100% { transform: translateX(100vw) scale(1.3); opacity: 0; }
+    }
+
+    @keyframes crackWaveFlash {
+      0% { opacity: 0; }
+      25% { opacity: 0.35; }
+      50% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes intensePulse {
+      0% { transform: scale(1); text-shadow: 0 0 15px rgba(240, 228, 181, 1), 2px 2px 6px rgba(0, 0, 0, 0.9); }
+      50% { transform: scale(1.08); text-shadow: 0 0 22px rgba(240, 228, 181, 1), 3px 3px 8px rgba(0, 0, 0, 0.95); opacity: 0.95; }
+      100% { transform: scale(1); text-shadow: 0 0 15px rgba(240, 228, 181, 1), 2px 2px 6px rgba(0, 0, 0, 0.9); }
+    }
+
+    @media (max-width: 768px) {
+      .loading-screen p { font-size: 1.8rem; letter-spacing: 1.2px; }
+      .odm-trail { width: 140px; height: 35px; }
+      .second-trail { width: 130px; height: 30px; }
+      .third-trail { width: 135px; height: 32px; top: 50%; }
+    }
+
+    @media (min-width: 1200px) {
+      .loading-screen p { font-size: 3.2rem; }
+      .odm-trail { width: 220px; height: 55px; }
+      .second-trail { width: 200px; height: 50px; }
+      .third-trail { width: 210px; height: 52px; }
+    }
 /* Main content area */
 .main {
   padding: 2rem;

@@ -64,9 +64,12 @@ const AppContent = () => {
 
   if (loading) {
     return (
-      <div className="loading-screen">
-        <p>Loading...</p>
-      </div>
+      <div class="loading-screen" role="alert" aria-live="polite">
+    <div class="odm-trail"></div>
+    <div class="second-trail"></div>
+    <div class="third-trail"></div>
+    <p>Loading...</p>
+  </div>
     );
   }
 

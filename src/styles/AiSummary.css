@@ -1,0 +1,622 @@
+/* AiSummary.css */
+
+/* Root variables for consistent theming */
+:root {
+  --primary-bg: #1f2937; /* bg-gray-900 */
+  --card-bg: #374151; /* bg-gray-800 */
+  --text-color: #ffffff; /* white text */
+  --text-secondary: #d1d5db; /* gray-300 */
+  --input-bg: #ffffff; /* white */
+  --input-text: #000000; /* black */
+  --input-border: #d1d5db; /* gray-300 */
+  --input-disabled: #e5e7eb; /* gray-200 */
+  --button-bg: #2563eb; /* blue-600 */
+  --button-hover: #1d4ed8; /* blue-700 */
+  --button-disabled: #6b7280; /* gray-500 */
+  --clear-bg: #4b5563; /* gray-600 */
+  --clear-hover: #374151; /* gray-700 */
+  --error-bg: #ef4444; /* red-500 */
+  --error-text: #ffffff; /* white */
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --border-radius: 0.75rem;
+  --transition: all 0.3s ease;
+  --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Reset and base styles */
+.ai-summary-container {
+  min-height: 100vh;
+  background-color: var(--primary-bg);
+  color: var(--text-color);
+  font-family: var(--font-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+  box-sizing: border-box;
+}
+
+/* Card container for the form and content */
+.ai-summary-card {
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow);
+  border-radius: var(--border-radius);
+  width: 100%;
+  max-width: 64rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: var(--transition);
+}
+
+/* Title styling */
+.ai-summary-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+/* Form styling */
+.ai-summary-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Responsive form layout */
+@media (min-width: 640px) {
+  .ai-summary-form {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Input field styling */
+.ai-summary-input {
+  flex: 1;
+  padding: 0.875rem 1.25rem;
+  border-radius: var(--border-radius);
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border: 2px solid var(--input-border);
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: var(--transition);
+}
+
+/* Input focus state */
+.ai-summary-input:focus {
+  outline: none;
+  border-color: var(--button-bg);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* Input disabled state */
+.ai-summary-input:disabled {
+  background-color: var(--input-disabled);
+  border-color: var(--input-disabled);
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+/* Input error state */
+.ai-summary-input[aria-invalid="true"] {
+  border-color: var(--error-bg);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+/* Button container */
+.ai-summary-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Submit button styling */
+.ai-summary-submit {
+  padding: 0.875rem 2rem;
+  border-radius: var(--border-radius);
+  background-color: var(--button-bg);
+  color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+/* Submit button hover state */
+.ai-summary-submit:hover:not(:disabled) {
+  background-color: var(--button-hover);
+  transform: translateY(-1px);
+}
+
+/* Submit button disabled state */
+.ai-summary-submit:disabled {
+  background-color: var(--button-disabled);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Submit button focus state */
+.ai-summary-submit:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+/* Clear button styling */
+.ai-summary-clear {
+  padding: 0.875rem 2rem;
+  border-radius: var(--border-radius);
+  background-color: var(--clear-bg);
+  color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+/* Clear button hover state */
+.ai-summary-clear:hover:not(:disabled) {
+  background-color: var(--clear-hover);
+  transform: translateY(-1px);
+}
+
+/* Clear button disabled state */
+.ai-summary-clear:disabled {
+  background-color: var(--button-disabled);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Clear button focus state */
+.ai-summary-clear:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(75, 85, 99, 0.3);
+}
+
+/* Error message styling */
+.ai-summary-error {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Loading indicator styling */
+.ai-summary-loading {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-top: 1rem;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Summary content styling */
+.ai-summary-content {
+  background-color: var(--clear-bg);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  overflow-y: auto;
+  max-height: 400px;
+  text-align: justify;
+  margin-top: 1rem;
+  border: 1px solid #4b5563;
+  transition: var(--transition);
+}
+
+/* Summary content hover state (subtle effect) */
+.ai-summary-content:hover {
+  border-color: var(--button-bg);
+}
+
+/* Summary content text */
+.ai-summary-content-text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+  .ai-summary-title {
+    font-size: 1.75rem;
+  }
+
+  .ai-summary-input {
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .ai-summary-submit,
+  .ai-summary-clear {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .ai-summary-error {
+    font-size: 0.95rem;
+  }
+
+  .ai-summary-loading {
+    font-size: 1.1rem;
+  }
+
+  .ai-summary-content-text {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ai-summary-container {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .ai-summary-card {
+    padding: 1.25rem;
+  }
+
+  .ai-summary-title {
+    font-size: 1.5rem;
+  }
+
+  .ai-summary-input {
+    font-size: 0.9rem;
+  }
+
+  .ai-summary-buttons {
+    flex-direction: column;
+  }
+
+  .ai-summary-submit,
+  .ai-summary-clear {
+    width: 100%;
+    padding: 0.75rem;
+  }
+}
+
+/* High contrast mode for accessibility */
+@media (prefers-contrast: high) {
+  .ai-summary-container {
+    background-color: #000000;
+  }
+
+  .ai-summary-card {
+    background-color: #1f2937;
+    border: 2px solid #ffffff;
+  }
+
+  .ai-summary-input {
+    background-color: #ffffff;
+    border-color: #000000;
+    color: #000000;
+  }
+
+  .ai-summary-submit {
+    background-color: #3b82f6;
+  }
+
+  .ai-summary-clear {
+    background-color: #6b7280;
+  }
+
+  .ai-summary-error {
+    background-color: #dc2626;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .ai-summary-error,
+  .ai-summary-loading,
+  .ai-summary-submit,
+  .ai-summary-clear,
+  .ai-summary-content {
+    transition: none;
+  }
+
+  .ai-summary-error {
+    animation: none;
+  }
+
+  .ai-summary-loading {
+    animation: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .ai-summary-container {
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  .ai-summary-card {
+    box-shadow: none;
+    border: 1px solid #000000;
+  }
+
+  .ai-summary-input,
+  .ai-summary-submit,
+  .ai-summary-clear {
+    display: none;
+  }
+
+  .ai-summary-content {
+    max-height: none;
+    overflow: visible;
+    border: none;
+  }
+
+  .ai-summary-content-text {
+    color: #000000;
+  }
+}
+
+/* Additional utility styles */
+.ai-summary-container:focus-within {
+  outline: 2px solid var(--button-bg);
+  outline-offset: 2px;
+}
+
+.ai-summary-input::placeholder {
+  color: #6b7280;
+  opacity: 0.8;
+}
+
+.ai-summary-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ai-summary-content::-webkit-scrollbar-track {
+  background: #2d3748;
+  border-radius: 4px;
+}
+
+.ai-summary-content::-webkit-scrollbar-thumb {
+  background: var(--button-bg);
+  border-radius: 4px;
+}
+
+.ai-summary-content::-webkit-scrollbar-thumb:hover {
+  background: var(--button-hover);
+}
+
+/* Custom focus styles for accessibility */
+.ai-summary-input:focus-visible,
+.ai-summary-submit:focus-visible,
+.ai-summary-clear:focus-visible {
+  outline: 2px solid var(--button-bg);
+  outline-offset: 2px;
+}
+
+/* Ensure long text wraps correctly */
+.ai-summary-content-text {
+  word-break: break-word;
+  hyphens: auto;
+}
+
+/* Micro-interactions for buttons */
+.ai-summary-submit:active:not(:disabled),
+.ai-summary-clear:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* Ensure form elements are aligned */
+.ai-summary-form > * {
+  box-sizing: border-box;
+}
+
+/* Add subtle border to card on hover */
+.ai-summary-card:hover {
+  border: 1px solid var(--button-bg);
+}
+
+/* Ensure error message is readable on small screens */
+.ai-summary-error {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* Add padding to loading state for consistency */
+.ai-summary-loading {
+  padding: 0.5rem;
+}
+
+/* Ensure summary content is scrollable on touch devices */
+.ai-summary-content {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Add subtle animation for summary appearance */
+.ai-summary-content {
+  animation: fadeIn 0.5s ease;
+}
+
+/* Ensure buttons have consistent height */
+.ai-summary-submit,
+.ai-summary-clear {
+  line-height: 1.5;
+}
+
+/* Add fallback for older browsers */
+.ai-summary-container {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+/* Ensure text is legible in all states */
+.ai-summary-content-text {
+  font-family: var(--font-primary);
+  font-weight: 400;
+}
+
+/* Add subtle shadow to input on focus */
+.ai-summary-input:focus {
+  box-shadow: var(--shadow);
+}
+
+/* Ensure error message has enough contrast */
+.ai-summary-error {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Add hover effect for card */
+.ai-summary-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ai-summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.15);
+}
+
+/* Ensure form is centered on small screens */
+@media (max-width: 640px) {
+  .ai-summary-form {
+    align-items: stretch;
+  }
+}
+
+/* Add padding to buttons on small screens */
+@media (max-width: 480px) {
+  .ai-summary-submit,
+  .ai-summary-clear {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Ensure input is full-width on small screens */
+@media (max-width: 640px) {
+  .ai-summary-input {
+    width: 100%;
+  }
+}
+
+/* Add subtle border to loading state */
+.ai-summary-loading {
+  border: 1px solid var(--text-secondary);
+  border-radius: 0.5rem;
+}
+
+/* Ensure summary content has consistent padding */
+.ai-summary-content {
+  padding: 1.5rem 2rem;
+}
+
+/* Add hover effect for error message */
+.ai-summary-error:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure buttons are evenly spaced */
+.ai-summary-buttons {
+  justify-content: center;
+}
+
+/* Add subtle animation for button clicks */
+.ai-summary-submit,
+.ai-summary-clear {
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-summary-submit::after,
+.ai-summary-clear::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.ai-summary-submit:active::after,
+.ai-summary-clear:active::after {
+  width: 200px;
+  height: 200px;
+}
+
+/* Ensure summary text is readable on all devices */
+.ai-summary-content-text {
+  font-size: clamp(0.95rem, 2.5vw, 1rem);
+}
+
+/* Add subtle border to input on hover */
+.ai-summary-input:hover:not(:disabled) {
+  border-color: var(--button-bg);
+}
+
+/* Ensure card is centered on large screens */
+@media (min-width: 1024px) {
+  .ai-summary-card {
+    max-width: 48rem;
+  }
+}
+
+/* Add subtle animation for error message */
+.ai-summary-error {
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25%, 75% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+/* Ensure loading text is centered */
+.ai-summary-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Add subtle border to summary content on focus */
+.ai-summary-content:focus-within {
+  border-color: var(--button-bg);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}

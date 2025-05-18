@@ -1,42 +1,40 @@
 /* App.css */
 
-/* Root variables for consistent theming */
+/* Color variables for light and dark themes */
 :root {
-  --light-bg: #f8fafc; /* Light background */
-  --light-text: #1f2937; /* Light text */
-  --light-header-bg: #ffffff; /* Light header */
-  --light-primary: #2563eb; /* Light primary */
-  --light-primary-hover: #1d4ed8; /* Light primary hover */
-  --light-secondary: #6b7280; /* Light secondary */
-  --light-secondary-hover: #4b5563; /* Light secondary hover */
-  --light-accent: #16a34a; /* Light accent */
-  --light-accent-hover: #15803d; /* Light accent hover */
-  --light-danger: #dc2626; /* Light danger */
-  --light-danger-hover: #b91c1c; /* Light danger hover */
-  --light-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --light-border: #e5e7eb; /* Light border */
+  --light-bg: #f8fafc;
+  --light-text: #1f2937;
+  --light-header-bg: #ffffff;
+  --light-primary: #2563eb;
+  --light-primary-hover: #1d4ed8;
+  --light-secondary: #6b7280;
+  --light-secondary-hover: #4b5563;
+  --light-accent: #16a34a;
+  --light-accent-hover: #15803d;
+  --light-danger: #dc2626;
+  --light-danger-hover: #b91c1c;
 
-  --dark-bg: #111827; /* Dark background */
-  --dark-text: #e5e7eb; /* Dark text */
-  --dark-header-bg: #1f2937; /* Dark header */
-  --dark-primary: #3b82f6; /* Dark primary */
-  --dark-primary-hover: #2563eb; /* Dark primary hover */
-  --dark-secondary: #9ca3af; /* Dark secondary */
-  --dark-secondary-hover: #6b7280; /* Dark secondary hover */
-  --dark-accent: #22c55e; /* Dark accent */
-  --dark-accent-hover: #16a34a; /* Dark accent hover */
-  --dark-danger: #ef4444; /* Dark danger */
-  --dark-danger-hover: #dc2626; /* Dark danger hover */
-  --dark-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-  --dark-border: #374151; /* Dark border */
+  --dark-bg: #111827;
+  --dark-text: #e5e7eb;
+  --dark-header-bg: #1f2937;
+  --dark-primary: #3b82f6;
+  --dark-primary-hover: #2563eb;
+  --dark-secondary: #9ca3af;
+  --dark-secondary-hover: #6b7280;
+  --dark-accent: #22c55e;
+  --dark-accent-hover: #16a34a;
+  --dark-danger: #ef4444;
+  --dark-danger-hover: #dc2626;
 
-  --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-display: 'IM Fell English', 'Arial', sans-serif; /* For AoT-inspired loading */
-  --transition: all 0.3s ease;
+  /* Spacing and typography variables */
   --border-radius: 6px;
+  --button-padding: 0.5rem 1.25rem;
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
 }
 
-/* Theme-specific variables */
+/* Theme classes */
 .light-theme {
   --bg: var(--light-bg);
   --text: var(--light-text);
@@ -49,8 +47,6 @@
   --accent-hover: var(--light-accent-hover);
   --danger: var(--light-danger);
   --danger-hover: var(--light-danger-hover);
-  --shadow: var(--light-shadow);
-  --border: var(--light-border);
 }
 
 .dark-theme {
@@ -65,42 +61,36 @@
   --accent-hover: var(--dark-accent-hover);
   --danger: var(--dark-danger);
   --danger-hover: var(--dark-danger-hover);
-  --shadow: var(--dark-shadow);
-  --border: var(--dark-border);
 }
 
-/* Base app styles */
+/* App container */
 .app {
   background-color: var(--bg);
   color: var(--text);
-  font-family: var(--font-primary);
+  font-family: var(--font-family);
   min-height: 100vh;
-  transition: var(--transition);
-  display: flex;
-  flex-direction: column;
+  transition: background-color var(--transition-medium), color var(--transition-medium);
 }
 
-/* Header styling */
+/* Header styles */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
   background-color: var(--header-bg);
-  box-shadow: var(--shadow);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
-  z-index: 1000;
-  border-bottom: 1px solid var(--border);
+  z-index: 10;
+  flex-wrap: wrap;
 }
 
-/* Title styling */
+/* Title */
 .title {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.025em;
-  color: var(--text);
-  margin: 0;
 }
 
 /* Navigation buttons container */
@@ -108,69 +98,68 @@
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
-  align-items: center;
 }
 
-/* Generic nav button styling */
-.nav-button {
-  padding: 0.5rem 1.25rem;
+/* Shared button styles */
+.button-base {
+  padding: var(--button-padding);
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
-  background-color: var(--primary);
   color: #ffffff;
-  transition: var(--transition);
-  position: relative;
-  overflow: hidden;
+  transition: background-color var(--transition-fast), transform 0.1s ease;
+  user-select: none;
+  outline-offset: 2px;
 }
 
-/* Nav button hover state */
+/* Focus styles for accessibility */
+.button-base:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Navigation button */
+.nav-button {
+  background-color: var(--primary);
+}
+
 .nav-button:hover {
   background-color: var(--primary-hover);
   transform: translateY(-1px);
 }
 
-/* Nav button active state */
 .nav-button:active {
   transform: translateY(0);
 }
 
-/* Nav button focus state */
-.nav-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-}
-
 /* Theme toggle button */
 .theme-toggle {
-  padding: 0.5rem 1.25rem;
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
   background-color: var(--accent);
-  color: #ffffff;
-  transition: var(--transition);
 }
 
-/* Theme toggle hover state */
 .theme-toggle:hover {
   background-color: var(--accent-hover);
   transform: translateY(-1px);
 }
 
-/* Theme toggle active state */
 .theme-toggle:active {
   transform: translateY(0);
 }
 
-/* Theme toggle focus state */
-.theme-toggle:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
+/* Logout button */
+.logout-button {
+  background-color: var(--danger);
+}
+
+.logout-button:hover {
+  background-color: var(--danger-hover);
+  transform: translateY(-1px);
+}
+
+.logout-button:active {
+  transform: translateY(0);
 }
 
 /* User info container */
@@ -184,37 +173,88 @@
 .user-welcome {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text);
 }
 
-/* Logout button */
-.logout-button {
-  padding: 0.5rem 1.25rem;
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background-color: var(--danger);
-  color: #ffffff;
-  transition: var(--transition);
+/* Loading screen */
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(180deg, #1a0d0d 0%, #3b1e1e 100%);
+  overflow: hidden;
+  position: relative;
+  font-family: 'IM Fell English', 'Arial', sans-serif;
+  font-size: 3.5rem;
+  color: #d4a017;
+  text-shadow: 0 0 10px #8b0000, 0 0 20px #8b0000;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  animation: shake 0.1s ease-in-out infinite;
+  z-index: 2;
 }
 
-/* Logout button hover state */
-.logout-button:hover {
-  background-color: var(--danger-hover);
-  transform: translateY(-1px);
+/* Animated steam effect */
+.loading-screen::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(139, 0, 0, 0.4) 0%,
+    rgba(139, 0, 0, 0) 100%
+  );
+  animation: steam 3s linear infinite;
+  z-index: 1;
 }
 
-/* Logout button active state */
-.logout-button:active {
-  transform: translateY(0);
+/* Animated ellipsis dots */
+.loading-screen .dots {
+  font-family: 'IM Fell English', 'Arial', sans-serif;
+  font-size: 3.5rem;
+  color: #2e8b5754;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 30px);
+  animation: dots 1.2s steps(3, end) infinite;
+  z-index: 2;
 }
 
-/* Logout button focus state */
-.logout-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+/* Shake animation */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-2px) translateY(2px);
+  }
+}
+
+/* Dots animation */
+@keyframes dots {
+  0%, 20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60%, 100% {
+    content: '...';
+  }
+}
+
+/* Steam animation */
+@keyframes steam {
+  0% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-60px);
+    opacity: 0;
+  }
 }
 
 /* Main content area */
@@ -224,128 +264,33 @@
   max-width: none;
   margin: 0;
   min-height: calc(100vh - 80px);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
-/* Loading screen styling */
-.loading-screen {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: linear-gradient(180deg, #1a0d0d 0%, #3b1e1e 100%); /* AoT-inspired dark red */
-  overflow: hidden;
-  position: relative;
-  font-family: var(--font-display);
-}
-
-/* Loading text */
-.loading-screen p {
-  font-size: 3.5rem;
-  color: #d4a017; /* Fiery yellow-orange */
-  text-shadow: 0 0 10px #8b0000, 0 0 20px #8b0000; /* Red glow */
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  animation: shake 0.1s ease-in-out infinite;
-  position: relative;
-  z-index: 2;
-}
-
-/* Steam effect for loading screen */
-.loading-screen::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(139, 0, 0, 0.4) 0%, rgba(139, 0, 0, 0) 100%);
-  animation: steam 3s linear infinite;
-  z-index: 1;
-}
-
-/* Animated ellipsis dots */
-.loading-screen .dots {
-  font-size: 3.5rem;
-  color: rgba(46, 139, 87, 0.33); /* Dark green with transparency */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, 30px);
-  animation: dots 1.2s steps(3, end) infinite;
-  z-index: 2;
-}
-
-/* Back button styling */
+/* Back button */
 .back-button {
+  background-color: var(--secondary);
+  color: #ffffff;
+  padding: var(--button-padding);
+  margin-bottom: 1.5rem;
   display: inline-flex;
   align-items: center;
-  padding: 0.5rem 1.25rem;
-  margin-bottom: 1.5rem;
-  border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
-  background-color: var(--secondary);
-  color: #ffffff;
-  transition: var(--transition);
+  transition: background-color var(--transition-fast), transform 0.1s ease;
 }
 
-/* Back button hover state */
 .back-button:hover {
   background-color: var(--secondary-hover);
   transform: translateY(-1px);
 }
 
-/* Back button active state */
 .back-button:active {
   transform: translateY(0);
 }
 
-/* Back button focus state */
-.back-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.3);
-}
-
-/* Animation keyframes */
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(-2px) translateY(2px); }
-}
-
-@keyframes dots {
-  0%, 20% { content: '.'; }
-  40% { content: '..'; }
-  60%, 100% { content: '...'; }
-}
-
-@keyframes steam {
-  0% { transform: translateY(0); opacity: 0.5; }
-  100% { transform: translateY(-60px); opacity: 0; }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Responsive design */
-@media (max-width: 1024px) {
-  .header {
-    padding: 1.25rem 1.5rem;
-  }
-
-  .title {
-    font-size: 1.75rem;
-  }
-
-  .nav-buttons {
-    gap: 0.5rem;
-  }
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
@@ -355,13 +300,11 @@
 
   .nav-buttons {
     justify-content: center;
-    flex-wrap: wrap;
   }
 
   .user-info {
     flex-direction: column;
     gap: 0.75rem;
-    text-align: center;
   }
 
   .main {
@@ -370,14 +313,6 @@
 
   .title {
     font-size: 1.5rem;
-  }
-
-  .loading-screen p {
-    font-size: 2.5rem;
-  }
-
-  .loading-screen .dots {
-    font-size: 2.5rem;
   }
 }
 
@@ -393,367 +328,4 @@
   .title {
     font-size: 1.25rem;
   }
-
-  .header {
-    padding: 0.75rem;
-  }
-
-  .main {
-    padding: 0.75rem;
-  }
-
-  .loading-screen p {
-    font-size: 2rem;
-  }
-
-  .loading-screen .dots {
-    font-size: 2rem;
-    transform: translate(-50%, 20px);
-  }
-}
-
-/* Accessibility: High contrast mode */
-@media (prefers-contrast: high) {
-  .light-theme {
-    --bg: #ffffff;
-    --text: #000000;
-    --header-bg: #ffffff;
-    --primary: #1e40af;
-    --primary-hover: #1e3a8a;
-    --secondary: #4b5563;
-    --secondary-hover: #374151;
-    --accent: #15803d;
-    --accent-hover: #14532d;
-    --danger: #b91c1c;
-    --danger-hover: #991b1b;
-  }
-
-  .dark-theme {
-    --bg: #000000;
-    --text: #ffffff;
-    --header-bg: #1f2937;
-    --primary: #60a5fa;
-    --primary-hover: #3b82f6;
-    --secondary: #d1d5db;
-    --secondary-hover: #9ca3af;
-    --accent: #4ade80;
-    --accent-hover: #22c55e;
-    --danger: #f87171;
-    --danger-hover: #ef4444;
-  }
-
-  .header {
-    border: 2px solid var(--text);
-  }
-
-  .nav-button,
-  .theme-toggle,
-  .logout-button,
-  .back-button {
-    border: 1px solid var(--text);
-  }
-}
-
-/* Accessibility: Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .app,
-  .header,
-  .nav-button,
-  .theme-toggle,
-  .logout-button,
-  .back-button,
-  .loading-screen p,
-  .loading-screen::before,
-  .loading-screen .dots {
-    transition: none;
-    animation: none;
-  }
-}
-
-/* Print styles */
-@media print {
-  .app {
-    background-color: #ffffff;
-    color: #000000;
-  }
-
-  .header,
-  .nav-buttons,
-  .theme-toggle,
-  .user-info,
-  .back-button {
-    display: none;
-  }
-
-  .main {
-    padding: 0;
-    min-height: auto;
-  }
-
-  .loading-screen {
-    display: none;
-  }
-}
-
-/* Additional utility styles */
-.app:focus-within {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
-.nav-button::after,
-.theme-toggle::after,
-.logout-button::after,
-.back-button::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.4s ease, height 0.4s ease;
-}
-
-.nav-button:active::after,
-.theme-toggle:active::after,
-.logout-button:active::after,
-.back-button:active::after {
-  width: 200px;
-  height: 200px;
-}
-
-.header {
-  animation: fadeIn 0.5s ease;
-}
-
-.main {
-  animation: fadeIn 0.7s ease;
-}
-
-/* Custom scrollbar for main content */
-.main::-webkit-scrollbar {
-  width: 8px;
-}
-
-.main::-webkit-scrollbar-track {
-  background: var(--header-bg);
-  border-radius: 4px;
-}
-
-.main::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 4px;
-}
-
-.main::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-hover);
-}
-
-/* Focus styles for accessibility */
-.nav-button:focus-visible,
-.theme-toggle:focus-visible,
-.logout-button:focus-visible,
-.back-button:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
-/* Loading screen enhancements */
-.loading-screen {
-  background: linear-gradient(180deg, #1a0d0d 0%, #3b1e1e 100%), radial-gradient(circle, rgba(139, 0, 0, 0.2) 0%, transparent 70%);
-}
-
-/* Additional steam effect layer */
-.loading-screen::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to top, rgba(139, 0, 0, 0.3) 0%, rgba(139, 0, 0, 0) 100%);
-  animation: steam-reverse 4s linear infinite;
-  z-index: 1;
-}
-
-@keyframes steam-reverse {
-  0% { transform: translateY(0); opacity: 0.4; }
-  100% { transform: translateY(60px); opacity: 0; }
-}
-
-/* Hover effect for header */
-.header:hover {
-  box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.2);
-}
-
-/* Ensure buttons are evenly spaced */
-.nav-buttons {
-  justify-content: center;
-}
-
-/* Micro-interactions for user info */
-.user-info {
-  transition: var(--transition);
-}
-
-.user-info:hover {
-  transform: translateY(-2px);
-}
-
-/* Ensure text is legible */
-.title,
-.user-welcome {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Add subtle border to main content */
-.main {
-  border-top: 1px solid var(--border);
-}
-
-/* Ensure loading screen is touch-friendly */
-.loading-screen {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Add hover effect for loading text */
-.loading-screen p:hover {
-  text-shadow: 0 0 15px #8b0000, 0 0 30px #8b0000;
-}
-
-/* Ensure buttons have consistent height */
-.nav-button,
-.theme-toggle,
-.logout-button,
-.back-button {
-  line-height: 1.5;
-}
-
-/* Fallback for older browsers */
-.header,
-.nav-buttons,
-.user-info {
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-}
-
-/* Add subtle animation for nav buttons */
-.nav-button {
-  animation: fadeIn 0.3s ease;
-}
-
-/* Ensure main content is centered */
-.main {
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  align-items: stretch;
-}
-
-/* Add subtle shadow to buttons on focus */
-.nav-button:focus,
-.theme-toggle:focus,
-.logout-button:focus,
-.back-button:focus {
-  box-shadow: var(--shadow);
-}
-
-/* Ensure loading screen text is readable */
-.loading-screen p {
-  font-weight: 700;
-}
-
-/* Add hover effect for user welcome */
-.user-welcome:hover {
-  color: var(--primary);
-}
-
-/* Ensure header is centered on small screens */
-@media (max-width: 768px) {
-  .header {
-    align-items: center;
-  }
-}
-
-/* Add padding to buttons on small screens */
-@media (max-width: 480px) {
-  .nav-button,
-  .theme-toggle,
-  .logout-button,
-  .back-button {
-    padding: 0.5rem 0.75rem;
-  }
-}
-
-/* Ensure main is full-width on small screens */
-@media (max-width: 640px) {
-  .main {
-    width: 100%;
-  }
-}
-
-/* Add subtle border to loading screen */
-.loading-screen {
-  border: 1px solid #8b0000;
-}
-
-/* Ensure user info is readable */
-.user-info {
-  font-family: var(--font-primary);
-}
-
-/* Add hover effect for back button */
-.back-button:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Ensure header has consistent padding */
-.header {
-  padding: clamp(1rem, 2vw, 1.5rem) clamp(1rem, 3vw, 2rem);
-}
-
-/* Add subtle animation for main content */
-.main {
-  animation: fadeIn 0.5s ease;
-}
-
-/* Ensure loading screen has consistent z-index */
-.loading-screen::before,
-.loading-screen::after {
-  z-index: 1;
-}
-
-/* Add subtle border to nav buttons on hover */
-.nav-button:hover {
-  border: 1px solid var(--primary-hover);
-}
-
-/* Ensure title is centered */
-.title {
-  text-align: center;
-}
-
-/* Add subtle animation for user info */
-.user-info {
-  animation: fadeIn 0.5s ease;
-}
-
-/* Ensure buttons are touch-friendly */
-.nav-button,
-.theme-toggle,
-.logout-button,
-.back-button {
-  touch-action: manipulation;
-}
-
-/* Add subtle glow to loading screen text */
-.loading-screen p {
-  animation: glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes glow {
-  from { text-shadow: 0 0 10px #8b0000, 0 0 20px #8b0000; }
-  to { text-shadow: 0 0 15px #8b0000, 0 0 30px #8b0000; }
 }

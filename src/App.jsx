@@ -22,28 +22,31 @@ const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const fetchUser = async () => {
-        try {
-          await api.get('/debug');
-          const response = await api.get('/auth/me');
-          setUser(response.data);
-        } catch (error) {
-          console.error('Auto-login error:', error);
-          if (error.response?.status === 401 || error.response?.status === 403) {
-            localStorage.removeItem('token');
-          }
-        } finally {
-          setLoading(false);
+ useEffect(() => {
+  const token = localStorage.getItem('token');
+
+  // Always hide the loader after 1 second
+  const timer = setTimeout(() => setLoading(false), 3000);
+
+  if (token) {
+    const fetchUser = async () => {
+      try {
+        await api.get('/debug');
+        const response = await api.get('/auth/me');
+        setUser(response.data);
+      } catch (error) {
+        console.error('Auto-login error:', error);
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          localStorage.removeItem('token');
         }
-      };
-      fetchUser();
-    } else {
-      setLoading(false);
-    }
-  }, []);
+      }
+    };
+    fetchUser();
+  }
+
+  return () => clearTimeout(timer); // Clean up on unmount
+}, []);
+
 
   useEffect(() => {
     localStorage.setItem('theme', theme);

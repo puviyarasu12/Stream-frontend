@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { getMovieSummary } from '../utils/api';
 import debounce from 'lodash/debounce';
 import '../styles/AiSummary.css'; // Extracted styles

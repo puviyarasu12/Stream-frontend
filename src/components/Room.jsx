@@ -10,7 +10,6 @@ import { socket } from '../socket';
 import '../styles/room.css';
 
 const Room = ({ room, user: propUser, onLeaveRoom }) => {
-  const navigate = useNavigate();
 
   // User handling
   let user = propUser;
@@ -610,3 +609,4 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
 };
 
 export default Room;
+

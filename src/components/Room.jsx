@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import api from '../utils/api';
 import MovieSearch from './MovieSearch';
@@ -599,5 +598,6 @@ useEffect(() => {
 };
 
 export default Room;
+
 
 

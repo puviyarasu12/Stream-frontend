@@ -196,64 +196,54 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     await joinRoom(inviteCode);
   };
 
-  // Socket and video sync
-  useEffect(() => {
-    if (!joined || room.isPrivate) return;
+useEffect(() => {
+  if (!joined || room.isPrivate) return;
 
-    fetchRoomState();
-    if (!socket.connected) socket.connect();
-    socket.emit('join-room', room._id);
+  fetchRoomState();
+  if (!socket.connected) socket.connect();
+  socket.emit('join-room', room._id);
 
-    const syncTimestamps = [];
-    const maxSyncFrequency = 1000;
+  const syncTimestamps = [];
+  const maxSyncFrequency = 1000;
 
-    socket.on('video-sync', (videoState) => {
-      if (isUserAction.current) {
-        console.log('[video-sync] Ignoring sync due to user action');
-        return;
+  socket.on('video-sync', (videoState) => {
+    if (isUserAction.current) return;
+    if (videoState.timestamp <= lastSyncTimestamp.current) return;
+
+    lastSyncTimestamp.current = videoState.timestamp;
+
+    const now = Date.now();
+    if (
+      syncTimestamps.length > 0 &&
+      now - syncTimestamps[syncTimestamps.length - 1] < maxSyncFrequency
+    ) {
+      return;
+    }
+
+    syncTimestamps.push(now);
+    if (syncTimestamps.length > 5) syncTimestamps.shift();
+
+    setMovie(videoState);
+    setIsPlaying(videoState.isPlaying);
+
+    if (playerRef.current && videoState.isPlaying) {
+      const currentTime = playerRef.current.getCurrentTime();
+      const timeDiff = currentTime - videoState.currentTime;
+
+      if (Math.abs(timeDiff) > seekThreshold) {
+        playerRef.current.seekTo(videoState.currentTime + syncBuffer);
       }
+    }
 
-      if (videoState.timestamp <= lastSyncTimestamp.current) {
-        console.log('[video-sync] Ignoring stale sync event');
-        return;
-      }
-      lastSyncTimestamp.current = videoState.timestamp;
+    lastUpdateTime.current = videoState.currentTime;
+  });
 
-      const now = Date.now();
-      if (syncTimestamps.length > 0 && now - syncTimestamps[syncTimestamps.length - 1] < maxSyncFrequency) {
-        console.log('[video-sync] Ignoring sync due to debounce');
-        return;
-      }
-      syncTimestamps.push(now);
-      if (syncTimestamps.length > 5) syncTimestamps.shift();
+  return () => {
+    socket.emit('leave-room', room._id);
+    socket.off('video-sync');
+  };
+}, [joined, room._id, room.isPrivate, fetchRoomState]);
 
-      setMovie(videoState);
-      setIsPlaying(videoState.isPlaying);
-
-      if (playerRef.current && videoState.isPlaying) {
-        const currentTime = playerRef.current.getCurrentTime();
-        const timeDiff = currentTime - videoState.currentTime;
-        console.log(
-          `[video-sync] currentTime: ${currentTime}, videoState.currentTime: ${videoState.currentTime}, timeDiff: ${timeDiff}`
-        );
-
-        if (Math.abs(timeDiff) > seekThreshold) {
-          if (timeDiff > 0 && timeDiff <= seekThreshold) {
-            console.log('[video-sync] Ignoring small positive timeDiff within tolerance');
-            return;
-          }
-          playerRef.current.seekTo(videoState.currentTime + syncBuffer);
-          console.log(`[video-sync] Seeking to ${videoState.currentTime + syncBuffer}`);
-        }
-      }
-      lastUpdateTime.current = videoState.currentTime;
-    });
-
-    return () => {
-      socket.emit('leave-room', room._id);
-      socket.off('video-sync');
-    };
-  }, [joined, room._id, fetchRoomState]);
 
   // Update movie state with user actions
   const updateMovieState = async (currentTime, playing) => {
@@ -609,4 +599,5 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
 };
 
 export default Room;
+
 

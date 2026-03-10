@@ -50,8 +50,8 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
   const lastUpdateTime = useRef(0);
   const isUserAction = useRef(false);
   const lastSyncTimestamp = useRef(0);
-  const syncBuffer = 0.1;
-  const seekThreshold = 5;
+  // FIX: Lowered syncBuffer so small drifts are corrected
+  const syncBuffer = 0.5;
 
   // Fetch invite code for creator
   const fetchInviteCode = useCallback(async () => {
@@ -195,65 +195,64 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
     await joinRoom(inviteCode);
   };
 
-useEffect(() => {
-  if (!joined || room.isPrivate) return;
+  // FIX: Removed `room.isPrivate` exclusion — sync now works for ALL rooms (public + private)
+  // FIX: Simplified sync logic so pause/play is always applied immediately
+  // FIX: Seek correction uses syncBuffer threshold to avoid jitter
+  useEffect(() => {
+    if (!joined) return;
 
-  fetchRoomState();
-  if (!socket.connected) socket.connect();
-  socket.emit('join-room', room._id);
+    fetchRoomState();
+    if (!socket.connected) socket.connect();
+    socket.emit('join-room', room._id);
 
-  const syncTimestamps = [];
-  const maxSyncFrequency = 1000;
+    socket.on('video-sync', (videoState) => {
+      // Ignore events we ourselves triggered
+      if (isUserAction.current) return;
+      // Ignore stale/duplicate events
+      if (videoState.timestamp <= lastSyncTimestamp.current) return;
 
-  socket.on('video-sync', (videoState) => {
-    if (isUserAction.current) return;
-    if (videoState.timestamp <= lastSyncTimestamp.current) return;
+      lastSyncTimestamp.current = videoState.timestamp;
 
-    lastSyncTimestamp.current = videoState.timestamp;
+      // Always apply play/pause immediately
+      setIsPlaying(videoState.isPlaying);
 
-    const now = Date.now();
-    if (
-      syncTimestamps.length > 0 &&
-      now - syncTimestamps[syncTimestamps.length - 1] < maxSyncFrequency
-    ) {
-      return;
-    }
-
-    syncTimestamps.push(now);
-    if (syncTimestamps.length > 5) syncTimestamps.shift();
-
-    setMovie(videoState);
-    setIsPlaying(videoState.isPlaying);
-
-    if (playerRef.current && videoState.isPlaying) {
-      const currentTime = playerRef.current.getCurrentTime();
-      const timeDiff = currentTime - videoState.currentTime;
-
-      if (Math.abs(timeDiff) > seekThreshold) {
-        playerRef.current.seekTo(videoState.currentTime + syncBuffer);
+      // Update movie metadata
+      if (videoState.url) {
+        setMovie((prev) => ({
+          ...prev,
+          url: videoState.url,
+          title: videoState.title,
+          currentTime: videoState.currentTime,
+          isPlaying: videoState.isPlaying,
+        }));
       }
-    }
 
-    lastUpdateTime.current = videoState.currentTime;
-  });
+      // Seek if we've drifted beyond the buffer threshold
+      if (playerRef.current) {
+        const currentTime = playerRef.current.getCurrentTime();
+        const timeDiff = Math.abs(currentTime - videoState.currentTime);
+        if (timeDiff > syncBuffer) {
+          playerRef.current.seekTo(videoState.currentTime, 'seconds');
+        }
+      }
 
-  return () => {
-    socket.emit('leave-room', room._id);
-    socket.off('video-sync');
-  };
-}, [joined, room._id, room.isPrivate, fetchRoomState]);
+      lastUpdateTime.current = videoState.currentTime;
+    });
+
+    return () => {
+      socket.emit('leave-room', room._id);
+      socket.off('video-sync');
+    };
+  }, [joined, room._id, fetchRoomState]);
 
 
   // Update movie state with user actions
+  // FIX: Removed the 1-second skip guard for currentTime — pause/play must always broadcast
   const updateMovieState = async (currentTime, playing) => {
     try {
-      if (Math.abs(currentTime - lastUpdateTime.current) < 1) {
-        console.log('[updateMovieState] Skipping sync due to insignificant time change');
-        return;
-      }
-
       isUserAction.current = true;
       lastUpdateTime.current = currentTime;
+
       const videoState = {
         currentTime,
         isPlaying: playing,
@@ -261,9 +260,15 @@ useEffect(() => {
         url: movie?.url,
         timestamp: Date.now(),
       };
-      await api.patch(`/rooms/${room._id}/movie`, videoState);
+
+      // Broadcast via socket immediately so other users react fast
       socket.emit('video-sync', { roomId: room._id, videoState });
+
+      // Persist to DB in background
+      await api.patch(`/rooms/${room._id}/movie`, videoState);
       setError(null);
+
+      // Release the lock after a short delay so we don't re-apply our own event
       setTimeout(() => {
         isUserAction.current = false;
       }, 1000);
@@ -302,29 +307,24 @@ useEffect(() => {
     e.preventDefault();
     console.log('Custom URL submitted:', customUrl);
 
-    // List of domains that should be rendered in an iframe
     const supportedEmbedDomains = [
       'vidmoly.to',
       'dhcplay.com',
       'play.onestream.watch',
-      'play.bunnycdn.to', // Added to support BunnyCDN embeds
+      'play.bunnycdn.to',
     ];
 
-    // Check if the URL is from a supported embed domain
     const isEmbedUrl = supportedEmbedDomains.some((domain) => customUrl.includes(domain));
 
     if (isEmbedUrl) {
-      console.log('Rendering URL in iframe:', customUrl);
       setMovie({ url: customUrl, title: 'Custom Video' });
       setError(null);
       setCustomUrl('');
     } else if (ReactPlayer.canPlay(customUrl)) {
-      console.log('Rendering URL with ReactPlayer:', customUrl);
       setMovie({ url: customUrl, title: 'Custom Video' });
       setError(null);
       setCustomUrl('');
     } else {
-      console.error('Invalid video URL:', customUrl);
       setError(
         'Unsupported video URL. Please use a supported platform (e.g., YouTube, Vimeo, Vidmoly, BunnyCDN) or a valid embed link.'
       );
@@ -350,8 +350,6 @@ useEffect(() => {
   };
 
   if (error) {
-    console.log('Room creator ID:', room?.creator?._id);
-    console.log('User ID:', user?._id);
     return (
       <div className="room">
         <div className="error-message">{error}</div>
@@ -423,7 +421,6 @@ useEffect(() => {
                 <button
                   onClick={() => setShowWatchlist(!showWatchlist)}
                   className="toggle-watchlist-btn btn btn--secondary"
-불편한
                 >
                   {showWatchlist ? 'Hide Watchlist' : 'Show Watchlist'}
                 </button>
@@ -511,7 +508,6 @@ useEffect(() => {
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  // Comment out sandbox for testing if BunnyCDN fails to load
                   sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
                   onError={() => {
                     setError('Failed to load video. Please check the URL or try another.');
@@ -527,12 +523,18 @@ useEffect(() => {
                   height="100%"
                   onProgress={handleProgress}
                   onPlay={() => {
+                    // FIX: Always broadcast play events regardless of time change
                     setIsPlaying(true);
                     updateMovieState(playerRef.current?.getCurrentTime() || 0, true);
                   }}
                   onPause={() => {
+                    // FIX: Always broadcast pause events regardless of time change
                     setIsPlaying(false);
                     updateMovieState(playerRef.current?.getCurrentTime() || 0, false);
+                  }}
+                  onSeek={(seconds) => {
+                    // FIX: Broadcast seek events so all users jump to the same position
+                    updateMovieState(seconds, isPlaying);
                   }}
                   onError={() => {
                     setError('Error playing video. Please try another URL.');
@@ -598,6 +600,3 @@ useEffect(() => {
 };
 
 export default Room;
-
-
-

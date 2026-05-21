@@ -86,9 +86,9 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       } catch (joinError) {
         console.error('Failed to join private room:', joinError.response?.data, joinError.response?.status);
         if (joinError.response?.status === 403) {
-          setError('You are banned from this room.');
+          setError('You are banned from this zone.');
         } else if (joinError.response?.status === 404) {
-          setError('Invalid invite code or room not found.');
+          setError('Invalid invite code or zone not found.');
         } else {
           setError('Failed to join private room.');
         }
@@ -138,14 +138,14 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       } catch (error) {
         console.error('Fetch room state error:', error.response?.data, error.response?.status);
         if (error.response?.status === 403) {
-          setError(error.response.data.error.includes('banned') ? 'You are banned from this room.' : 'You are not authorized to access this room.');
+          setError(error.response.data.error.includes('banned') ? 'You are banned from this zone.' : 'You are not authorized to access this zone.');
           if (pollInterval.current) clearInterval(pollInterval.current);
           setTimeout(() => {
             if (typeof onLeaveRoom === 'function') onLeaveRoom();
             else console.error('onLeaveRoom is not a function');
           }, 3000);
         } else if (error.response?.status === 404) {
-          setError('Room not found or has been deleted.');
+          setError('Zone not found or has been deleted.');
           if (pollInterval.current) clearInterval(pollInterval.current);
           setTimeout(() => {
             if (typeof onLeaveRoom === 'function') onLeaveRoom();
@@ -159,7 +159,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
             window.location.href = '/';
           }, 3000);
         } else {
-          setError('Error fetching room state. Please try refreshing.');
+          setError('Error fetching zone state. Please try refreshing.');
         }
       }
     },
@@ -227,14 +227,14 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
             }
           }
 
-          if (backwardSeekCount > 2) {
-            console.log('[video-sync] backwardSeekCount exceeded 2, pausing and playing to resync');
-            playerRef.current.pause();
-            setTimeout(() => {
-              playerRef.current.play();
-            }, 500);
-            backwardSeekCount = 0;
-          }
+            if (backwardSeekCount > 2) {
+              console.log('[video-sync] backwardSeekCount exceeded 2, pausing and playing to resync');
+              setIsPlaying(false);
+              setTimeout(() => {
+                setIsPlaying(true);
+              }, 500);
+              backwardSeekCount = 0;
+            }
         }
         lastUpdateTime.current = videoState.currentTime;
       });
@@ -488,64 +488,35 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
                 playing={isPlaying}
                 controls={true}
                 width="100%"
-                height="100%"
+                  height="100%"
+                onPlay={() => updateMovieState(playerRef.current.getCurrentTime(), true)}
+                onPause={() => updateMovieState(playerRef.current.getCurrentTime(), false)}
                 onProgress={handleProgress}
-                onPlay={() => {
-                  setIsPlaying(true);
-                  updateMovieState(playerRef.current?.getCurrentTime() || 0, true);
-                }}
-                onPause={() => {
-                  setIsPlaying(false);
-                  updateMovieState(playerRef.current?.getCurrentTime() || 0, false);
-                }}
-                onError={() => {
-                  setError('Error playing video. Please try another URL.');
-                }}
-                config={{
-                  youtube: {
-                    playerVars: {
-                      origin: window.location.origin,
-                      enablejsapi: 1,
-                    },
-                  },
-                }}
               />
             </div>
           ) : (
-            <div className="movie-selection" style={{ overflowY: 'auto', minHeight: '200px' }}>
-              <form onSubmit={handleCustomUrlSubmit} className="url-input-form">
+            <div className="no-video-selected">
+              <p>No video selected. Choose one from the watchlist or paste a custom URL below.</p>
+              <form onSubmit={handleCustomUrlSubmit} className="custom-url-form">
                 <input
-                  type="text"
+                  type="url"
+                  placeholder="Enter a video URL (YouTube, Vimeo, etc.)"
                   value={customUrl}
                   onChange={(e) => setCustomUrl(e.target.value)}
-                  placeholder="Enter video URL (YouTube, Vimeo, etc.)"
-                  className="url-input"
+                  className="custom-url-input"
+                  required
                 />
-                <button type="submit" className="btn btn--primary">Play Video</button>
+                <button type="submit" className="btn btn--primary">Play</button>
               </form>
-              <div className="movie-search-section" style={{ overflow: 'visible', minHeight: '150px' }}>
-                <div style={{ overflowY: 'auto', maxHeight: '300px' }}>
-                  <MovieSearch onMovieSelect={handleMovieSelect} buttonText="Add to Zone Watchlist" />
-                </div>
-              </div>
             </div>
           )}
         </div>
-        <div className="chat-section">
-          <Chat roomId={room._id} user={user} />
-        </div>
+
+        <Chat roomId={room._id} user={user} />
       </div>
 
       {selectedMovie && (
-        <MovieDetails
-          movie={selectedMovie}
-          onClose={handleCloseModal}
-          onSelect={(movie) => {
-            handleSelectWatchlistMovie(movie.id);
-            handleCloseModal();
-          }}
-          buttonText="Add to Zone Watchlist"
-        />
+        <MovieDetails movie={selectedMovie} onClose={handleCloseModal} onSelect={handleSelectWatchlistMovie} />
       )}
     </div>
   );

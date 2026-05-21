@@ -78,7 +78,7 @@ const RoomSettings = ({ room, onSettingsUpdate, currentUserId }) => {
       console.log('RoomSettings: Room deleted successfully');
       onSettingsUpdate(null, true);
     } catch (error) {
-      const errorMsg = error.response?.data?.error || 'Failed to delete room. Please try again.';
+      const errorMsg = error.response?.data?.error || 'Failed to delete zone. Please try again.';
       console.error('RoomSettings: Error deleting room:', errorMsg, error);
       setError(errorMsg);
     } finally {
@@ -121,7 +121,7 @@ const RoomSettings = ({ room, onSettingsUpdate, currentUserId }) => {
         className="delete-room-btn"
         disabled={loading || !isCreator}
       >
-        {loading ? 'Processing...' : 'Delete Room'}
+        {loading ? 'Processing...' : 'Delete Zone'}
       </button>
     </div>
   );

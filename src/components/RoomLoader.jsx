@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import Room from './Room';
 import api from '../utils/api';
@@ -8,90 +8,110 @@ const RoomLoader = ({ user, onLeaveRoom }) => {
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const fetchRoom = useCallback(async () => {
+    if (!roomId) {
+      setError('Invalid room ID.');
+      setLoading(false);
+      return;
+    }
+    if (!user || (!user._id && !user.userId)) {
+      setError('User information is missing or incomplete.');
+      setLoading(false);
+      return;
+    }
+    try {
+      setLoading(true);
+      console.log(`Fetching room data for roomId: ${roomId}, user:`, user);
+      const response = await api.get(`/rooms/${roomId}`);
+      setRoom(response.data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching room:', err);
+      setError('Failed to load room data. Please try again.');
+      if (retryCount < 3) {
+        setTimeout(() => {
+          setRetryCount(retryCount + 1);
+          fetchRoom();
+        }, 2000);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [roomId, user, retryCount]);
 
   useEffect(() => {
-    const fetchRoom = async () => {
-      try {
-        setLoading(true);
-        const response = await api.get(`/rooms/${roomId}`);
-        setRoom(response.data);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching room:', err);
-        setError('Failed to load room data. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (roomId) {
-      fetchRoom();
-    }
-  }, [roomId]);
+    fetchRoom();
+  }, [fetchRoom]);
 
   if (loading) {
     return (
-    <div className="loading-state">
-      <div className="shuriken"></div>
-      <p>Loading room...</p>
-      <style>{`
-        .loading-state {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100vh;
-          background-color: #1a1a1a;
-          color: #fff;
-          font-family: 'Arial', sans-serif;
-        }
+      <div className="loading-state">
+        <div className="anime-spinner">
+          <div className="circle circle1"></div>
+          <div className="circle circle2"></div>
+          <div className="circle circle3"></div>
+          <div className="circle circle4"></div>
+          <div className="circle circle5"></div>
+          <div className="circle circle6"></div>
+          <div className="circle circle7"></div>
+          <div className="circle circle8"></div>
+        </div>
+        <p>Loading zone...</p>
+        <style>{`
+          .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a, #2c003e);
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+          }
 
-          .shuriken {
-            width: 60px;
-            height: 60px;
+          .anime-spinner {
             position: relative;
-            animation: spin 1s linear infinite;
+            width: 80px;
+            height: 80px;
+            animation: spin 2s linear infinite;
           }
 
-          .shuriken::before,
-          .shuriken::after {
-            content: '';
+          .circle {
             position: absolute;
-            background-color: #ff4500;
-            border-radius: 2px;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at center, #ff6ec4, #7873f5);
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: pulse 1.5s ease-in-out infinite;
           }
 
-          .shuriken::before {
-            width: 60px;
-            height: 8px;
-            top: 26px;
-            left: 0;
-            transform: rotate(45deg);
-            box-shadow: 0 0 8px rgba(255, 69, 0, 0.8);
-          }
-
-          .shuriken::after {
-            width: 60px;
-            height: 8px;
-            top: 26px;
-            left: 0;
-            transform: rotate(-45deg);
-            box-shadow: 0 0 8px rgba(255, 69, 0, 0.8);
-          }
+          .circle1 { top: 0; left: 32px; animation-delay: 0s; }
+          .circle2 { top: 12px; left: 58px; animation-delay: 0.1875s; }
+          .circle3 { top: 38px; left: 70px; animation-delay: 0.375s; }
+          .circle4 { top: 64px; left: 58px; animation-delay: 0.5625s; }
+          .circle5 { top: 76px; left: 32px; animation-delay: 0.75s; }
+          .circle6 { top: 64px; left: 6px; animation-delay: 0.9375s; }
+          .circle7 { top: 38px; left: -6px; animation-delay: 1.125s; }
+          .circle8 { top: 12px; left: 6px; animation-delay: 1.3125s; }
 
           @keyframes spin {
-            from {
-              transform: rotate(0deg);
-            }
-            to {
-              transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+
+          @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.6); }
           }
 
           p {
-            margin-top: 20px;
-            font-size: 1.2rem;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            margin-top: 24px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-shadow: 0 0 8px #ff6ec4, 0 0 12px #7873f5;
           }
         `}</style>
       </div>
@@ -105,17 +125,17 @@ const RoomLoader = ({ user, onLeaveRoom }) => {
         <button onClick={() => window.location.href = '/rooms'}>
           Back to Zones
         </button>
-      <style jsx>{`
-        .error-state {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100vh;
-          background-color: #1a1a1a;
-          color: #ff4040;
-          font-family: 'Arial', sans-serif;
-        }
+        <style jsx>{`
+          .error-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #1a1a1a;
+            color: #ff4040;
+            font-family: 'Arial', sans-serif;
+          }
 
           p {
             font-size: 1.2rem;
@@ -145,9 +165,9 @@ const RoomLoader = ({ user, onLeaveRoom }) => {
   if (!room) {
     return (
       <div className="error-state">
-        <p>Room not found</p>
+        <p>Zone not found</p>
         <button onClick={() => window.location.href = '/rooms'}>
-          Back to Rooms
+          Back to Zones
         </button>
         <style jsx>{`
           .error-state {

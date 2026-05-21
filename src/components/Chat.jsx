@@ -37,9 +37,7 @@ const Chat = ({ roomId, user }) => {
     };
   }, [fetchMessages]);
 
-  // Removed useEffect that auto-scrolls to bottom on new messages
 
-  // Removed useEffect that tracks scroll position for auto-scroll
 
   const handleSubmit = async (e) => {
     e.preventDefault();

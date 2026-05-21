@@ -12,15 +12,8 @@ export const socket = io(SOCKET_URL, {
   reconnectionDelay: 1000
 });
 
-// Add event listeners for room notifications and clip events
-socket.on('poll-update', (poll) => {
-  console.log('Poll updated:', poll);
-});
 
 socket.on('new-trivia', (trivia) => {
   console.log('New trivia:', trivia);
 });
 
-socket.on('new-clip', (clip) => {
-  console.log('New clip:', clip);
-});

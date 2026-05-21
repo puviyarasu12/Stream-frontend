@@ -62,13 +62,7 @@ const AppContent = () => {
     navigate(`/${view === 'home' ? '' : view}`);
   };
 
-  if (loading) {
-    return (
-      <div className="loading-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
+  
 
   return (
     <div className={`app ${theme}-theme`}>

@@ -103,6 +103,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
             <a href="/login" className="nav-link">
               Login
             </a>
+  
             <button
               className="theme-toggle"
               onClick={toggleTheme}
@@ -124,7 +125,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
           </p>
           <div className="hero-buttons">
             <a href="/rooms" className="cta-button">
-              Browse Rooms
+                Browse Zones
             </a>
             <a href="/movies" className="secondary-button">
               Explore Movies
@@ -147,7 +148,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
             Join a Zone
           </h2>
           <p className="section-text">
-            Connect with friends and watch movies together in real-time. Enter an invite code or browse available rooms.
+            Connect with friends and watch movies together in real-time. Enter an invite code or browse available zones.
           </p>
           <form className="join-room-form" onSubmit={handleJoinRoom}>
             <input
@@ -159,7 +160,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
               onChange={(e) => setInviteCode(e.target.value)}
             />
             <button type="submit" className="join-room-button">
-              Join Room
+              Join Zone
             </button>
             {formError && <p className="error-message" role="alert">{formError}</p>}
           </form>
@@ -177,19 +178,19 @@ const Home = ({ isAuthenticated, onNavigate }) => {
                 });
                 if (!response.ok) {
                   const errorData = await response.json();
-                  alert(errorData.error || 'Failed to join a random room');
+                  alert(errorData.error || 'Failed to join a random zone');
                   return;
                 }
                 const room = await response.json();
                 window.location.href = `/room/${room._id}`;
               } catch (error) {
-                alert('Error joining random room');
+                alert('Error joining random zone');
                 console.error(error);
               }
             }}
-            aria-label="Quick join a random active room"
+            aria-label="Quick join a random active zone"
           >
-            Quick Join Random Room
+            Quick Join Random Zone
           </button>
         </section>
 
@@ -202,7 +203,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
               {[
                 {
                   question: 'How does StreamNest work?',
-                  answer: 'StreamNest lets you create or join virtual rooms for real-time movie watching with synced playback, trivia, and chat.',
+                  answer: 'StreamNest lets you create or join virtual zones for real-time movie watching with synced playback, trivia, and chat.',
                 },
                 {
                   question: 'Is StreamNest free to use?',
@@ -264,7 +265,7 @@ const Home = ({ isAuthenticated, onNavigate }) => {
               <button
                 className="cta-button light"
                 onClick={() => onNavigate(isAuthenticated ? 'Zones' : 'login')}
-                aria-label="Sign up or go to rooms"
+                aria-label="Sign up or go to zones"
               >
                 Sign Up Now
               </button>

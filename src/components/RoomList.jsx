@@ -105,7 +105,9 @@ const RoomList = ({ onRoomSelect, user }) => {
     console.log('Room:', room.name, 'Creator ID:', room.creator?._id, 'Is Private:', room.isPrivate);
     const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase());
     // Show zone if it's public or if the user is the creator or if showPrivateZones is true
-    return matchesSearch && (!room.isPrivate || String(room.creator._id) === String(user._id));
+    const isCreator = room.creator?._id && user?._id
+      && String(room.creator._id) === String(user._id);
+    return matchesSearch && (!room.isPrivate || isCreator);
   });
 
   return (
@@ -235,9 +237,9 @@ const RoomList = ({ onRoomSelect, user }) => {
                     <p className="movie-title">Playing: {room.movie.title}</p>
                   )}
                   <p className="room-details">
-                    Created by: {room.creator.username}
+                    Created by: {room.creator?.username || 'Unknown user'}
                     <br />
-                    Participants: {room.participants.length}
+                    Participants: {room.participants?.length || 0}
                   </p>
                 </div>
               </div>

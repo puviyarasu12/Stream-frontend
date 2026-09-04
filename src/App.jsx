@@ -17,7 +17,6 @@ const ProtectedRoute = ({ user, children }) => {
 
 const AppContent = () => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,13 +34,9 @@ const AppContent = () => {
           if (error.response?.status === 401 || error.response?.status === 403) {
             localStorage.removeItem('token');
           }
-        } finally {
-          setLoading(false);
         }
       };
       fetchUser();
-    } else {
-      setLoading(false);
     }
   }, []);
 

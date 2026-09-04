@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import api from '../utils/api';
 import MovieSearch from './MovieSearch';
@@ -10,8 +9,6 @@ import { socket } from '../socket';
 import '../styles/room.css';
 
 const Room = ({ room, user: propUser, onLeaveRoom }) => {
-  const navigate = useNavigate();
-
   // User handling
   let user = propUser;
   if (!user) {
@@ -52,6 +49,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
   const pollInterval = useRef(null);
   const lastUpdateTime = useRef(0);
   const isUserAction = useRef(false);
+  const isApplyingRemoteUpdate = useRef(false);
 
   // Fetch invite code for creator
   const fetchInviteCode = useCallback(async () => {
@@ -203,9 +201,10 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       let pauseCount = 0;
       let syncDisabled = false;
 
-      socket.on('video-sync', (videoState) => {
+      const handleVideoSync = (videoState) => {
         if (syncDisabled) return;
 
+        isApplyingRemoteUpdate.current = true;
         setMovie(videoState);
         setIsPlaying(videoState.isPlaying);
         if (playerRef.current) {
@@ -237,7 +236,12 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
             }
         }
         lastUpdateTime.current = videoState.currentTime;
-      });
+        setTimeout(() => {
+          isApplyingRemoteUpdate.current = false;
+        }, 0);
+      };
+
+      socket.on('video-sync', handleVideoSync);
 
       const handlePause = () => {
         pauseCount++;
@@ -248,18 +252,20 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
         }
       };
 
-      playerRef.current?.getInternalPlayer()?.addEventListener('pause', handlePause);
+      const internalPlayer = playerRef.current?.getInternalPlayer();
+      internalPlayer?.addEventListener('pause', handlePause);
 
       return () => {
         socket.emit('leave-room', room._id);
-        socket.off('video-sync');
-        playerRef.current?.getInternalPlayer()?.removeEventListener('pause', handlePause);
+        socket.off('video-sync', handleVideoSync);
+        internalPlayer?.removeEventListener('pause', handlePause);
       };
     }
   }, [fetchRoomState, joined, room._id]);
 
   const updateMovieState = async (currentTime, playing) => {
     try {
+      if (isApplyingRemoteUpdate.current) return;
       isUserAction.current = true;
       lastUpdateTime.current = currentTime;
       const videoState = {
@@ -272,6 +278,7 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
       await api.patch(`/rooms/${room._id}/movie`, videoState);
       socket.emit('video-sync', { roomId: room._id, videoState });
       setError(null);
+      isUserAction.current = false;
     } catch (error) {
       setError('Error updating movie state');
       isUserAction.current = false;
@@ -489,8 +496,16 @@ const Room = ({ room, user: propUser, onLeaveRoom }) => {
                 controls={true}
                 width="100%"
                   height="100%"
-                onPlay={() => updateMovieState(playerRef.current.getCurrentTime(), true)}
-                onPause={() => updateMovieState(playerRef.current.getCurrentTime(), false)}
+                onPlay={() => {
+                  if (!isApplyingRemoteUpdate.current) {
+                    updateMovieState(playerRef.current.getCurrentTime(), true);
+                  }
+                }}
+                onPause={() => {
+                  if (!isApplyingRemoteUpdate.current) {
+                    updateMovieState(playerRef.current.getCurrentTime(), false);
+                  }
+                }}
                 onProgress={handleProgress}
               />
             </div>

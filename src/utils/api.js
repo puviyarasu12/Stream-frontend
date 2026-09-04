@@ -3,9 +3,11 @@ import axios from 'axios';
 
 // Create a reusable axios instance
 const api = axios.create({
-  //baseURL: 'https://stream-backend-wxa4.onrender.com/api',
-  baseURL:'http://localhost:5000/api',
-  // baseURL: 'https://stream-backend-wxa4.onrender.com/api', // for production
+  baseURL: process.env.REACT_APP_API_URL || (
+    process.env.NODE_ENV === 'production'
+      ? 'https://stream-backend-wxa4.onrender.com/api'
+      : 'http://localhost:5000/api'
+  ),
   headers: {
     'Content-Type': 'application/json',
   },
